@@ -83,7 +83,7 @@ namespace gcn
 
     void TextField::setText(const std::string& text)
     {
-        mText->setRow(0, text);
+        mText->setContent(text);
     }
 
     void TextField::draw(Graphics* graphics)
