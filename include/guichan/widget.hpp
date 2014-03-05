@@ -380,6 +380,13 @@ namespace gcn
         bool isVisible() const;
 
         /**
+         * Checks if the widget setting is visible.
+         *
+         * @return True if widget setting is be visible, false otherwise.
+         */
+        bool isSetVisible() const;
+
+        /**
          * Sets the base color of the widget.
          *
          * @param color The baseground color.
