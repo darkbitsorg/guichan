@@ -364,6 +364,9 @@ namespace gcn
         if (mFocusHandler)
         {
             releaseModalFocus();
+            if (mFocusHandler->getModalMouseInputFocused() == this) {
+                releaseModalMouseInputFocus();
+            }
             mFocusHandler->remove(this);
         }
 
