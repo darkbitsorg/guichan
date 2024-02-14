@@ -1,3 +1,4 @@
+* Added support for building with CMake
 * Fixed handling of key events in the HGE backend
 
 Version 0.8.2
