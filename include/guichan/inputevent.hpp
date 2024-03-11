@@ -6,11 +6,11 @@
  * /______/ //______/ //_/ //_____/\ /_/ //_/ //_/ //_/ //_/ /|_/ /
  * \______\/ \______\/ \_\/ \_____\/ \_\/ \_\/ \_\/ \_\/ \_\/ \_\/
  *
- * Copyright (c) 2004 - 2008 Olof Naessén and Per Larsson
+ * Copyright (c) 2004 - 2008 Olof NaessÃ©n and Per Larsson
  *
  *
  * Per Larsson a.k.a finalman
- * Olof Naessén a.k.a jansem/yakslem
+ * Olof NaessÃ©n a.k.a jansem/yakslem
  *
  * Visit: http://guichan.sourceforge.net
  *
@@ -52,7 +52,7 @@ namespace gcn
     /**
      * Base class for all events concerning input.
      *
-     * @author Olof Naessén
+     * @author Olof NaessÃ©n
      * @since 0.6.0
      */
     class GCN_CORE_DECLSPEC InputEvent: public Event

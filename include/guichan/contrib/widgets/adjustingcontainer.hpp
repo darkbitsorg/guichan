@@ -6,11 +6,11 @@
  * /______/ //______/ //_/ //_____/\ /_/ //_/ //_/ //_/ //_/ /|_/ /
  * \______\/ \______\/ \_\/ \_____\/ \_\/ \_\/ \_\/ \_\/ \_\/ \_\/
  *
- * Copyright (c) 2007 - 2008 Josh Matthews and Olof Naessén
+ * Copyright (c) 2007 - 2008 Josh Matthews and Olof NaessÃ©n
  *
  *
  * Per Larsson a.k.a finalman
- * Olof Naessén a.k.a jansem/yakslem
+ * Olof NaessÃ©n a.k.a jansem/yakslem
  *
  * Visit: http://guichan.sourceforge.net
  *
