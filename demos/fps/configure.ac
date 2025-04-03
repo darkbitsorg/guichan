@@ -1,6 +1,6 @@
 AC_PREREQ([2.60])
 
-AC_INIT([guichanfpsdemo],[0.8.2],[olof@darkbits.org],[guichanfpsdemo])
+AC_INIT([guichanfpsdemo],[0.8.3],[olof@darkbits.org],[guichanfpsdemo])
 
 AC_CANONICAL_TARGET
 AC_SUBST(target)
