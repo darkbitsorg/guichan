@@ -1,6 +1,6 @@
 AUTOMAKE_OPTIONS = 1.4
 
-INCLUDES = -I$(top_srcdir)/include
+AM_CPPFLAGS = -I$(top_srcdir)/include
 
 SUBDIRS = images sound
 
@@ -14,7 +14,7 @@ guichanffdemo_HEADERS =			\
 	include/ffdemo.hpp		\
 	include/fflistbox.hpp		\
 	include/ffscrollarea.hpp	\
-	include/stringlistmodel.hpp	
+	include/stringlistmodel.hpp
 
 guichanffdemo_SOURCES = 		\
 	src/ffcharacterchooser.cpp	\
@@ -25,5 +25,3 @@ guichanffdemo_SOURCES = 		\
 	src/guichanffdemo.cpp
 
 guichanffdemo_LDADD = @GUICHANFFDEMO_LIBS@
-
-

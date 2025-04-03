@@ -1,6 +1,6 @@
 SUBDIRS = widgets @GUICHAN_EXTRADIRS@ hge openlayer contrib
 
-INCLUDES = -I$(top_srcdir)/include
+AM_CPPFLAGS = -I$(top_srcdir)/include
 
 lib_LTLIBRARIES = libguichan.la
 

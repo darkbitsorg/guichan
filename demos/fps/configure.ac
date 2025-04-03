@@ -1,20 +1,19 @@
-AC_PREREQ(2.57)
+AC_PREREQ([2.60])
 
-AC_INIT(guichanfpsdemo, 0.8.2, olof@darkbits.org, guichanfpsdemo)
+AC_INIT([guichanfpsdemo],[0.8.2],[olof@darkbits.org],[guichanfpsdemo])
 
-AC_CANONICAL_SYSTEM
+AC_CANONICAL_TARGET
 AC_SUBST(target)
 
-AM_INIT_AUTOMAKE(guichanfpsdemo, 0.8.2)
+AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER([include/config.hpp])
 
 AC_PROG_CXX
 AC_PROG_CC
 
 AC_PROG_MAKE_SET
-AC_LANG_CPLUSPLUS
+AC_LANG([C++])
 AC_PROG_INSTALL
-AC_HEADER_STDC
 
 AC_CHECK_PROG(HAS_SDL, sdl-config, yes)
 if test "x$HAS_SDL" != "xyes"; then
@@ -35,8 +34,9 @@ AC_CHECK_LIB(guichan, gcnGuichanVersion, GUICHANFPSDEMO_LIBS="$GUICHANFPSDEMO_LI
 
 AC_SUBST([GUICHANFPSDEMO_LIBS])
 
-AC_OUTPUT([
+AC_CONFIG_FILES([
 Makefile
 images/Makefile
 sound/Makefile
 ])
+AC_OUTPUT

@@ -3,22 +3,8 @@
 echo "Generating build information using aclocal, autoheader, automake and autoconf"
 echo "This may take a while ..."
 
-# Touch the timestamps on all the files since CVS messes them up
-directory=`dirname $0`
-
-touch $directory/*
-touch $directory/examples/*
-touch $directory/include/*
-touch $directory/include/guichan/*
-touch $directory/include/guichan/allegro/*
-touch $directory/include/guichan/opengl/*
-touch $directory/include/guichan/sdl/*
-touch $directory/include/guichan/widgets/*
-touch $directory/src/*
-touch $directory/src/allegro/*
-touch $directory/src/opengl/*
-touch $directory/src/sdl/*
-touch $directory/src/widgets/*
+# Make sure the m4 directory exists
+mkdir -p m4
 
 # Regenerate configuration files
 aclocal

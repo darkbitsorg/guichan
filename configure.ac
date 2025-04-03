@@ -1,9 +1,10 @@
-AC_PREREQ(2.57)
+AC_PREREQ([2.60])
 
-AC_INIT(guichan, 0.8.2, olof.naessen@gmail.com, guichan)
+AC_INIT([guichan],[0.8.2],[olof.naessen@gmail.com],[guichan])
 
-AC_CANONICAL_SYSTEM
+AC_CANONICAL_TARGET
 AC_SUBST(target)
+AC_CONFIG_MACRO_DIR([m4])
 
 ALLEGRO="disabled"
 OPENGL="disabled"
@@ -37,20 +38,19 @@ AC_SUBST(LT_CURRENT)
 AC_SUBST(LT_REVISION)
 AC_SUBST(LT_AGE)
 
-AM_INIT_AUTOMAKE(guichan, $GUICHAN_VERSION)
-AM_CONFIG_HEADER([include/config.hpp])
+AM_INIT_AUTOMAKE
+AC_CONFIG_HEADERS([include/config.hpp])
 
 AC_CONFIG_SRCDIR([src/gui.cpp])
 
 AC_PROG_CXX
 AC_PROG_CC
 
-AC_LIBTOOL_WIN32_DLL
-AM_PROG_LIBTOOL
+LT_INIT([win32-dll])
+AC_SUBST([LIBTOOL_DEPS])
 AC_PROG_MAKE_SET
-AC_LANG_CPLUSPLUS
+AC_LANG([C++])
 AC_PROG_INSTALL
-AC_HEADER_STDC
 
 CXXFLAGS="$CXXFLAGS -Wall -Wno-unused -DGUICHAN_BUILD"
 
@@ -153,8 +153,8 @@ ForceAllegro()
   GUICHAN_EXTRADIRS="$GUICHAN_EXTRADIRS allegro"
 }
 
-dnl AC_ARG_ENABLE(x,	     
-dnl [  --enable-x	Enable Xlib support [default=no]], 
+dnl AC_ARG_ENABLE(x,
+dnl [  --enable-x	Enable Xlib support [default=no]],
 dnl                , enable_x=no)
 dnl if test x$enable_x = xyes; then
 dnl   AC_PATH_X
@@ -167,10 +167,10 @@ dnl     HaveX
 dnl   fi
 dnl fi
 
-AC_ARG_ENABLE(opengl,	     
-[  --enable-opengl	Enable OpenGL support [default=yes]], 
+AC_ARG_ENABLE(opengl,
+[  --enable-opengl	Enable OpenGL support [default=yes]],
                , enable_opengl=yes)
-AC_ARG_ENABLE(force_opengl,	  
+AC_ARG_ENABLE(force_opengl,
 [  --enable-force-opengl     Force OpenGL support (skip checks for OpenGL) [default=no]],
               , enable_force_opengl=no)
 if test x$enable_opengl = xyes; then
@@ -182,10 +182,10 @@ if test x$enable_opengl = xyes; then
   fi
 fi
 
-dnl AC_ARG_ENABLE(glut,	     
-dnl [  --enable-glut	Enable GLUT support [default=yes]], 
+dnl AC_ARG_ENABLE(glut,
+dnl [  --enable-glut	Enable GLUT support [default=yes]],
 dnl                , enable_glut=yes)
-dnl AC_ARG_ENABLE(force_glut,	  
+dnl AC_ARG_ENABLE(force_glut,
 dnl [  --enable-force-glut     Force GLUT support (skip checks for GLUT) [default=no]],
 dnl               , enable_force_glut=no)
 dnl if test x$enable_glut = xyes; then
@@ -197,10 +197,10 @@ dnl     ForceGLUT
 dnl   fi
 dnl fi
 
-AC_ARG_ENABLE(sdlimage,	     
-[  --enable-sdlimage	Enable SDL_image support [default=yes]], 
+AC_ARG_ENABLE(sdlimage,
+[  --enable-sdlimage	Enable SDL_image support [default=yes]],
               , enable_sdlimage=yes)
-AC_ARG_ENABLE(force_sdlimage,	  
+AC_ARG_ENABLE(force_sdlimage,
 [  --enable-force-sdlimage     Force SDL Image support (skip checks for SDL Image) [default=no]],
               , enable_force_sdlimage=no)
 if test x$enable_sdlimage = xyes; then
@@ -212,10 +212,10 @@ if test x$enable_sdlimage = xyes; then
   fi
 fi
 
-AC_ARG_ENABLE(allegro,	  
+AC_ARG_ENABLE(allegro,
 [  --enable-allegro	  Enable Allegro support [default=yes]],
               , enable_allegro=yes)
-AC_ARG_ENABLE(force_allegro,	  
+AC_ARG_ENABLE(force_allegro,
 [  --enable-force-allegro     Force Allegro support (skip checks for Allegro) [default=no]],
               , enable_force_allegro=no)
 if test x$enable_allegro = xyes; then
@@ -223,7 +223,7 @@ if test x$enable_allegro = xyes; then
     AC_CHECK_HEADERS([allegro.h])
     AC_CHECK_PROG(HAVE_ALLEGRO, allegro-config, yes)
     if test "x$HAVE_ALLEGRO" != "xyes"; then
-      NoAllegro  
+      NoAllegro
     else
       HaveAllegro
     fi
@@ -232,10 +232,10 @@ if test x$enable_allegro = xyes; then
   fi
 fi
 
-AC_ARG_ENABLE(sdl,	  
+AC_ARG_ENABLE(sdl,
 [  --enable-sdl	  Enable SDL support [default=yes]],
              , enable_sdl=yes)
-AC_ARG_ENABLE(force_sdl,	  
+AC_ARG_ENABLE(force_sdl,
 [  --enable-force-sdl     Force SDL support (skip checks for SDL) [default=no]],
               , enable_force_sdl=no)
 if test x$enable_sdl = xyes; then
@@ -267,7 +267,7 @@ fi
 
 AC_SUBST([GUICHAN_EXTRADIRS])
 
-AC_OUTPUT([
+AC_CONFIG_FILES([
 Makefile
 guichan-0.8.pc
 examples/Makefile
@@ -298,14 +298,15 @@ src/openlayer/Makefile
 src/sdl/Makefile
 src/sdl/guichan_sdl-0.8.pc
 src/widgets/Makefile])
+AC_OUTPUT
 echo ""
 echo "IMPORTANT! You are about install a BETA version of Guichan"
 echo "which most likely will lose binary compatibility with the"
-echo "future stable release. This release should only be used" 
+echo "future stable release. This release should only be used"
 echo "for testing."
 echo ""
 echo "-------------------------------"
-echo "Guichan ready for compilation!" 
+echo "Guichan ready for compilation!"
 echo "-------------------------------"
 echo "* Allegro   = "$ALLEGRO
 echo "* HGE       = no (Windows specific and cannot be built)"
