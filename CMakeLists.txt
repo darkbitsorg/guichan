@@ -5,10 +5,38 @@ set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMake/Modules)
 
 project(guichan VERSION 0.8.3 LANGUAGES CXX)
 
-# TODO Guichan 0.9.0: Remove the .1
-set(PROJECT_SOVERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.1)
+# We're maintaining binary compatibility within minor releases at the moment
+set(PROJECT_SOVERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
 
 add_compile_definitions(GUICHAN_BUILD GUICHAN_EXTENSION_BUILD)
+
+# Find all dependencies first to check availability
+find_package(Allegro)
+find_package(OpenGL)
+find_package(SDL)
+find_package(SDL_image)
+
+# Set default values for options
+set(SDL_DEFAULT OFF)
+if(SDL_FOUND AND SDLIMAGE_FOUND)
+  set(SDL_DEFAULT ON)
+endif()
+
+option(ENABLE_ALLEGRO "Enable the Guichan Allegro extension" ${ALLEGRO_FOUND})
+option(ENABLE_OPENGL "Enable the Guichan OpenGL extension" ${OPENGL_FOUND})
+option(ENABLE_SDL "Enable the Guichan SDL extension" ${SDL_DEFAULT})
+
+option(BUILD_GUICHAN_SHARED
+       "Build the Guichan core library as a shared library." ON)
+
+option(BUILD_GUICHAN_ALLEGRO_SHARED
+       "Build the Guichan Allegro extension library as a shared library." ON)
+
+option(BUILD_GUICHAN_OPENGL_SHARED
+       "Build the Guichan OpenGL extension library as a shared library." ON)
+
+option(BUILD_GUICHAN_SDL_SHARED
+       "Build the Guichan SDL extension library as a shared library." ON)
 
 # The Guichan core library
 file(GLOB GUICHAN_HEADER include/guichan.hpp)
@@ -63,8 +91,6 @@ source_group(src/guichan/widgets FILES ${GUICHAN_WIDGET_HEADERS}
 source_group(src/guichan/contrib/widgets
              FILES ${GUICHAN_CONTRIB_WIDGET_HEADERS})
 
-option(BUILD_GUICHAN_SHARED
-       "Build the Guichan core library as a shared library." ON)
 if(BUILD_GUICHAN_SHARED)
   set(GUICHAN_LIBRARY_TYPE SHARED)
 else()
@@ -102,11 +128,10 @@ install(FILES ${GUICHAN_CONTRIB_WIDGET_HEADERS}
         DESTINATION include/guichan/contrib/widgets/)
 
 # The Guichan Allegro extension library
-option(ENABLE_ALLEGRO "Enable the Guichan Allegro extension" ON)
-option(BUILD_GUICHAN_ALLEGRO_SHARED
-       "Build the Guichan Allegro extension library as a shared library." ON)
-find_package(Allegro)
-if(ENABLE_ALLEGRO AND ALLEGRO_FOUND)
+if(ENABLE_ALLEGRO)
+  if(NOT ALLEGRO_FOUND)
+    message(FATAL_ERROR "Allegro extension was enabled but Allegro library was not found.")
+  endif()
 
   # The Guichan Allegro extension source
   file(GLOB GUICHAN_ALLEGRO_HEADER include/guichan/allegro.hpp)
@@ -158,11 +183,10 @@ if(ENABLE_ALLEGRO AND ALLEGRO_FOUND)
 endif()
 
 # The Guichan OpenGL extension library
-option(ENABLE_OPENGL "Enable the Guichan OpenGL extension" ON)
-option(BUILD_GUICHAN_OPENGL_SHARED
-       "Build the Guichan OpenGL extension library as a shared library." ON)
-find_package(OpenGL)
-if(ENABLE_OPENGL AND OPENGL_FOUND)
+if(ENABLE_OPENGL)
+  if(NOT OPENGL_FOUND)
+    message(FATAL_ERROR "OpenGL extension was enabled but OpenGL library was not found.")
+  endif()
 
   # The Guican OpenGL extension source
   file(GLOB GUICHAN_OPENGL_HEADER include/guichan/opengl.hpp)
@@ -213,14 +237,10 @@ if(ENABLE_OPENGL AND OPENGL_FOUND)
 endif()
 
 # The Guichan SDL extension library
-option(ENABLE_SDL "Enable the Guichan SDL extension" ON)
-option(BUILD_GUICHAN_SDL_SHARED
-       "Build the Guichan SDL extension library as a shared library." ON)
-find_package(SDL)
-find_package(SDL_image)
-if(ENABLE_SDL
-   AND SDL_FOUND
-   AND SDLIMAGE_FOUND)
+if(ENABLE_SDL)
+  if(NOT SDL_FOUND OR NOT SDLIMAGE_FOUND)
+    message(FATAL_ERROR "SDL extension was enabled but SDL or SDL_image libraries were not found.")
+  endif()
 
   # The Guichan SDL extension source
   file(GLOB GUICHAN_SDL_HEADER include/guichan/sdl.hpp)
