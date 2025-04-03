@@ -1,0 +1,10 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: guichan
+Description: A portable C++ GUI library
+Version: @PROJECT_VERSION@
+Libs: -L${libdir} -lguichan
+Cflags: -I${includedir}

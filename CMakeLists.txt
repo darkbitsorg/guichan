@@ -8,6 +8,12 @@ project(guichan VERSION 0.8.3 LANGUAGES CXX)
 # We're maintaining binary compatibility within minor releases at the moment
 set(PROJECT_SOVERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
 
+# Set up pkg-config variables
+set(prefix ${CMAKE_INSTALL_PREFIX})
+set(exec_prefix ${CMAKE_INSTALL_PREFIX})
+set(libdir ${CMAKE_INSTALL_PREFIX}/lib)
+set(includedir ${CMAKE_INSTALL_PREFIX}/include)
+
 add_compile_definitions(GUICHAN_BUILD GUICHAN_EXTENSION_BUILD)
 
 # Find all dependencies first to check availability
@@ -127,6 +133,15 @@ install(FILES ${GUICHAN_WIDGET_HEADERS} DESTINATION include/guichan/widgets/)
 install(FILES ${GUICHAN_CONTRIB_WIDGET_HEADERS}
         DESTINATION include/guichan/contrib/widgets/)
 
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/guichan.pc.in
+  ${CMAKE_CURRENT_BINARY_DIR}/guichan.pc
+  @ONLY)
+
+install(
+  FILES ${CMAKE_CURRENT_BINARY_DIR}/guichan.pc
+  DESTINATION lib/pkgconfig)
+
 # The Guichan Allegro extension library
 if(ENABLE_ALLEGRO)
   if(NOT ALLEGRO_FOUND)
@@ -180,6 +195,15 @@ if(ENABLE_ALLEGRO)
   install(FILES ${GUICHAN_ALLEGRO_HEADERS} DESTINATION include/guichan/allegro/)
   install(FILES ${GUICHAN_ALLEGRO_CONTRIB_HEADERS}
           DESTINATION include/guichan/contrib/allegro/)
+
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/guichan_allegro.pc.in
+    ${CMAKE_CURRENT_BINARY_DIR}/guichan_allegro.pc
+    @ONLY)
+
+  install(
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/guichan_allegro.pc
+    DESTINATION lib/pkgconfig)
 endif()
 
 # The Guichan OpenGL extension library
@@ -234,6 +258,15 @@ if(ENABLE_OPENGL)
   install(FILES ${GUICHAN_OPENGL_HEADERS} DESTINATION include/guichan/opengl/)
   install(FILES ${GUICHAN_OPENGL_CONTRIB_HEADERS}
           DESTINATION include/guichan/contrib/opengl/)
+
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/guichan_opengl.pc.in
+    ${CMAKE_CURRENT_BINARY_DIR}/guichan_opengl.pc
+    @ONLY)
+
+  install(
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/guichan_opengl.pc
+    DESTINATION lib/pkgconfig)
 endif()
 
 # The Guichan SDL extension library
@@ -292,6 +325,15 @@ if(ENABLE_SDL)
   install(FILES ${GUICHAN_SDL_HEADERS} DESTINATION include/guichan/sdl/)
   install(FILES ${GUICHAN_SDL_CONTRIB_HEADERS}
           DESTINATION include/guichan/contrib/sdl/)
+
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/guichan_sdl.pc.in
+    ${CMAKE_CURRENT_BINARY_DIR}/guichan_sdl.pc
+    @ONLY)
+
+  install(
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/guichan_sdl.pc
+    DESTINATION lib/pkgconfig)
 endif()
 
 # Export targets for downstream projects
