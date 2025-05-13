@@ -317,10 +317,7 @@ namespace gcn
 
     void TabbedArea::logic()
     {
-        for (unsigned int i = 0; i < mTabs.size(); i++)
-        {
-            mTabs[i].second->logic();
-        }
+        BasicContainer::logic();
     }
 
     void TabbedArea::adjustSize()

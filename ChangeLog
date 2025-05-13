@@ -2,6 +2,7 @@ Version 0.8.3
 =============
 
 * Added support for building with CMake (not binary compatible with autoconf)
+* Fixed TabbedArea to call logic on its tabs and active widget
 * Fixed handling of key events in the HGE backend
 * Updated autoconf files
 
