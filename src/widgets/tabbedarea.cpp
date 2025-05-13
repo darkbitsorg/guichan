@@ -317,6 +317,7 @@ namespace gcn
 
     void TabbedArea::logic()
     {
+        BasicContainer::logic();
     }
 
     void TabbedArea::adjustSize()

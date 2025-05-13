@@ -269,7 +269,7 @@ namespace gcn
     {
         if (mFocusHandler == NULL)
         {
-            throw GCN_EXCEPTION("No focushandler set (did you add the widget to the gui?).");
+            throw GCN_EXCEPTION("No focushandler set (requestFocus: did you add the widget to the gui?).");
         }
 
         if (isFocusable())
@@ -558,7 +558,7 @@ namespace gcn
     {
         if (mFocusHandler == NULL)
         {
-            throw GCN_EXCEPTION("No focushandler set (did you add the widget to the gui?).");
+            throw GCN_EXCEPTION("No focushandler set (requestModalFocus: did you add the widget to the gui?).");
         }
 
         mFocusHandler->requestModalFocus(this);
@@ -568,7 +568,7 @@ namespace gcn
     {
         if (mFocusHandler == NULL)
         {
-            throw GCN_EXCEPTION("No focushandler set (did you add the widget to the gui?).");
+            throw GCN_EXCEPTION("No focushandler set (requestModalMouseInputFocus: did you add the widget to the gui?).");
         }
 
         mFocusHandler->requestModalMouseInputFocus(this);
@@ -598,7 +598,7 @@ namespace gcn
     {
         if (mFocusHandler == NULL)
         {
-            throw GCN_EXCEPTION("No focushandler set (did you add the widget to the gui?).");
+            return false;
         }
 
         if (getParent() != NULL)
@@ -614,7 +614,7 @@ namespace gcn
     {
         if (mFocusHandler == NULL)
         {
-            throw GCN_EXCEPTION("No focushandler set (did you add the widget to the gui?).");
+            return false;
         }
 
         if (getParent() != NULL)
@@ -730,6 +730,6 @@ namespace gcn
         if (mParent != NULL)
         {
             mParent->showWidgetPart(this, rectangle);
-        }                
+        }
     }
 }
