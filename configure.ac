@@ -71,19 +71,20 @@ NoOpenGL()
 {
   AC_MSG_WARN(OpenGL support skipped when OpenGL not found.)
   OPENGL="no"
+  AM_CONDITIONAL([WITH_OPENGL], [false])
 }
 
 HaveOpenGL()
 {
   OPENGL="yes"
-  GUICHAN_EXTRADIRS="$GUICHAN_EXTRADIRS opengl"
+  AM_CONDITIONAL([WITH_OPENGL], [true])
 }
 
 ForceOpenGL()
 {
   AC_MSG_WARN(OpenGL support forced.)
   OPENGL="forced"
-  GUICHAN_EXTRADIRS="$GUICHAN_EXTRADIRS opengl"
+  AM_CONDITIONAL([WITH_OPENGL], [true])
 }
 
 dnl NoGLUT()
@@ -126,31 +127,32 @@ ForceSDLImage()
 
 HaveSDL()
 {
-  GUICHAN_EXTRADIRS="$GUICHAN_EXTRADIRS sdl"
+  AM_CONDITIONAL([WITH_SDL], [true])
 }
 
 ForceSDL()
 {
   AC_MSG_WARN(SDL support forced.)
-  GUICHAN_EXTRADIRS="$GUICHAN_EXTRADIRS sdl"
+  AM_CONDITIONAL([WITH_SDL], [true])
 }
 
 NoAllegro()
 {
   AC_MSG_WARN(Allegro support skipped when Allegro not found.)
+  AM_CONDITIONAL([WITH_ALLEGRO], [false])
 }
 
 HaveAllegro()
 {
   ALLEGRO="yes"
-  GUICHAN_EXTRADIRS="$GUICHAN_EXTRADIRS allegro"
+  AM_CONDITIONAL([WITH_ALLEGRO], [true])
 }
 
 ForceAllegro()
 {
   AC_MSG_WARN(Allegro support forced.)
   ALLEGRO="forced"
-  GUICHAN_EXTRADIRS="$GUICHAN_EXTRADIRS allegro"
+  AM_CONDITIONAL([WITH_ALLEGRO], [true])
 }
 
 dnl AC_ARG_ENABLE(x,
@@ -257,15 +259,15 @@ if test $SDL = "yes"; then
   if test $SDLIMAGE = "no"; then
     SDL="no"
     AC_MSG_WARN(SDL support skipped when SDL_image not found.)
+    AM_CONDITIONAL([WITH_SDL], [false])
   else
     HaveSDL
   fi
 else
   SDL="no"
   AC_MSG_WARN(SDL support skipped when SDL not found.)
+  AM_CONDITIONAL([WITH_SDL], [false])
 fi
-
-AC_SUBST([GUICHAN_EXTRADIRS])
 
 AC_CONFIG_FILES([
 Makefile
