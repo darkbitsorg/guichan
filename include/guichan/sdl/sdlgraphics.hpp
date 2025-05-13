@@ -72,7 +72,7 @@ namespace gcn
 
         /**
          * Sets the target SDL_Surface to draw to. The target can be any
-         * SDL_Surface. This funtion also pushes a clip areas corresponding to
+         * SDL_Surface. This function also pushes a clip areas corresponding to
          * the dimension of the target.
          *
          * @param target the target to draw to.
