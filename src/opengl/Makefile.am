@@ -2,6 +2,7 @@ lib_LTLIBRARIES = libguichan_opengl.la
 
 AM_CPPFLAGS = -I$(top_srcdir)/include
 
+libguichan_opengl_la_LIBADD  = $(top_builddir)/src/libguichan.la
 libguichan_opengl_la_LDFLAGS = -no-undefined -release $(LT_RELEASE) -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) -lGL
 
 libguichan_opengl_la_SOURCES =	\

@@ -115,8 +115,7 @@ NoSDLImage()
 HaveSDLImage()
 {
   SDLIMAGE="yes"
-  SDL_LIBS="$SDL_LIBS -lSDL_image"
-  CPPFLAGS="$CPPFLAGS `sdl-config --cflags`"
+  PKG_CHECK_MODULES([SDL], [sdl SDL_image])
 }
 
 ForceSDLImage()

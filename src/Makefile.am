@@ -1,4 +1,4 @@
-SUBDIRS = widgets hge openlayer contrib
+SUBDIRS = widgets . hge openlayer contrib
 
 # Conditionally add subdirectories based on available libraries
 if WITH_ALLEGRO
