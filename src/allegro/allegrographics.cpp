@@ -182,7 +182,7 @@ namespace gcn
 
         if (mClipStack.empty())
         {
-            throw GCN_EXCEPTION("Clip stack is empty, perhaps you called a draw funtion "
+            throw GCN_EXCEPTION("Clip stack is empty, perhaps you called a draw function "
                                 "outside of _beginDraw() and _endDraw()?");
         }
 
@@ -215,7 +215,7 @@ namespace gcn
 
         if (mClipStack.empty())
         {
-            throw GCN_EXCEPTION("Clip stack is empty, perhaps you called a draw funtion "
+            throw GCN_EXCEPTION("Clip stack is empty, perhaps you called a draw function "
                                 "outside of _beginDraw() and _endDraw()?");
         }
 
@@ -237,7 +237,7 @@ namespace gcn
 
         if (mClipStack.empty())
         {
-            throw GCN_EXCEPTION("Clip stack is empty, perhaps you called a draw funtion "
+            throw GCN_EXCEPTION("Clip stack is empty, perhaps you called a draw function "
                                 "outside of _beginDraw() and _endDraw()?");
         }
 
@@ -261,7 +261,7 @@ namespace gcn
 
         if (mClipStack.empty())
         {
-            throw GCN_EXCEPTION("Clip stack is empty, perhaps you called a draw funtion " 
+            throw GCN_EXCEPTION("Clip stack is empty, perhaps you called a draw function " 
                                 "outside of _beginDraw() and _endDraw()?");
         }
 
@@ -285,7 +285,7 @@ namespace gcn
 
         if (mClipStack.empty())
         {
-            throw GCN_EXCEPTION("Clip stack is empty, perhaps you called a draw funtion " 
+            throw GCN_EXCEPTION("Clip stack is empty, perhaps you called a draw function " 
                                 "outside of _beginDraw() and _endDraw()?");
         }
 
