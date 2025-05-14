@@ -5,6 +5,7 @@ Version 0.8.3
 * Fixed TabbedArea to call logic on its tabs and active widget
 * Fixed Widget::isModalFocused and Widget::isModalMouseInputFocused to not
   raise an exception when no FocusHandler is set
+* Link SDL, Allegro and GL backends with dependent libraries (autoconf)
 * Fixed handling of key events in the HGE backend
 * Updated autoconf files
 

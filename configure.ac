@@ -46,6 +46,8 @@ AC_CONFIG_SRCDIR([src/gui.cpp])
 AC_PROG_CXX
 AC_PROG_CC
 
+PKG_PROG_PKG_CONFIG
+
 LT_INIT([win32-dll])
 AC_SUBST([LIBTOOL_DEPS])
 AC_PROG_MAKE_SET
@@ -115,7 +117,13 @@ NoSDLImage()
 HaveSDLImage()
 {
   SDLIMAGE="yes"
-  PKG_CHECK_MODULES([SDL], [sdl SDL_image])
+  # Try using pkg-config first, fall back to manual configuration if not available
+  PKG_CHECK_MODULES([SDL], [sdl SDL_image], [], [
+    SDL_LIBS="$SDL_LIBS -lSDL_image"
+    SDL_CFLAGS="`sdl-config --cflags`"
+  ])
+  AC_SUBST(SDL_CFLAGS)
+  AC_SUBST(SDL_LIBS)
 }
 
 ForceSDLImage()
