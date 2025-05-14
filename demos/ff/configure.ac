@@ -1,20 +1,19 @@
-AC_PREREQ(2.57)
+AC_PREREQ([2.60])
 
-AC_INIT(guichanffdemo, 0.8.2, olof@darkbits.org, guichanffdemo)
+AC_INIT([guichanffdemo],[0.8.3],[olof@darkbits.org],[guichanffdemo])
 
-AC_CANONICAL_SYSTEM
+AC_CANONICAL_TARGET
 AC_SUBST(target)
 
-AM_INIT_AUTOMAKE(guichanffdemo, 0.8.2)
+AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER([include/config.hpp])
 
 AC_PROG_CXX
 AC_PROG_CC
 
 AC_PROG_MAKE_SET
-AC_LANG_CPLUSPLUS
+AC_LANG([C++])
 AC_PROG_INSTALL
-AC_HEADER_STDC
 
 AC_CHECK_PROG(HAS_SDL, sdl-config, yes)
 if test "x$HAS_SDL" != "xyes"; then
@@ -31,8 +30,9 @@ AC_CHECK_LIB(guichan, gcnGuichanVersion, GUICHANFFDEMO_LIBS="$GUICHANFFDEMO_LIBS
 
 AC_SUBST([GUICHANFFDEMO_LIBS])
 
-AC_OUTPUT([
+AC_CONFIG_FILES([
 Makefile
 images/Makefile
 sound/Makefile
 ])
+AC_OUTPUT

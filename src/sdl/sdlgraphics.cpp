@@ -6,11 +6,11 @@
  * /______/ //______/ //_/ //_____/\ /_/ //_/ //_/ //_/ //_/ /|_/ /
  * \______\/ \______\/ \_\/ \_____\/ \_\/ \_\/ \_\/ \_\/ \_\/ \_\/
  *
- * Copyright (c) 2004 - 2008 Olof Naessén and Per Larsson
+ * Copyright (c) 2004 - 2008 Olof NaessÃ©n and Per Larsson
  *
  *
  * Per Larsson a.k.a finalman
- * Olof Naessén a.k.a jansem/yakslem
+ * Olof NaessÃ©n a.k.a jansem/yakslem
  *
  * Visit: http://guichan.sourceforge.net
  *
@@ -137,7 +137,7 @@ namespace gcn
     {
         if (mClipStack.empty())
         {
-            throw GCN_EXCEPTION("Clip stack is empty, perhaps you called a draw funtion outside of _beginDraw() and _endDraw()?");
+            throw GCN_EXCEPTION("Clip stack is empty, perhaps you called a draw function outside of _beginDraw() and _endDraw()?");
         }
 
         const ClipRectangle& top = mClipStack.top();
@@ -165,7 +165,7 @@ namespace gcn
     {
         if (mClipStack.empty())
         {
-            throw GCN_EXCEPTION("Clip stack is empty, perhaps you called a draw funtion outside of _beginDraw() and _endDraw()?");
+            throw GCN_EXCEPTION("Clip stack is empty, perhaps you called a draw function outside of _beginDraw() and _endDraw()?");
         }
 
         const ClipRectangle& top = mClipStack.top();
@@ -219,7 +219,7 @@ namespace gcn
     {
         if (mClipStack.empty())
         {
-            throw GCN_EXCEPTION("Clip stack is empty, perhaps you called a draw funtion outside of _beginDraw() and _endDraw()?");
+            throw GCN_EXCEPTION("Clip stack is empty, perhaps you called a draw function outside of _beginDraw() and _endDraw()?");
         }
 
         const ClipRectangle& top = mClipStack.top();
@@ -244,7 +244,7 @@ namespace gcn
     {
         if (mClipStack.empty())
         {
-            throw GCN_EXCEPTION("Clip stack is empty, perhaps you called a draw funtion outside of _beginDraw() and _endDraw()?");
+            throw GCN_EXCEPTION("Clip stack is empty, perhaps you called a draw function outside of _beginDraw() and _endDraw()?");
         }
 
         const ClipRectangle& top = mClipStack.top();
@@ -363,7 +363,7 @@ namespace gcn
     {
         if (mClipStack.empty())
         {
-            throw GCN_EXCEPTION("Clip stack is empty, perhaps you called a draw funtion outside of _beginDraw() and _endDraw()?");
+            throw GCN_EXCEPTION("Clip stack is empty, perhaps you called a draw function outside of _beginDraw() and _endDraw()?");
         }
 
         const ClipRectangle& top = mClipStack.top();
@@ -502,7 +502,7 @@ namespace gcn
 
         if (mClipStack.empty())
         {
-            throw GCN_EXCEPTION("Clip stack is empty, perhaps you called a draw funtion outside of _beginDraw() and _endDraw()?");
+            throw GCN_EXCEPTION("Clip stack is empty, perhaps you called a draw function outside of _beginDraw() and _endDraw()?");
         }
 
         const ClipRectangle& top = mClipStack.top();
@@ -681,7 +681,7 @@ namespace gcn
     {
         if (mClipStack.empty())
         {
-            throw GCN_EXCEPTION("Clip stack is empty, perhaps you called a draw funtion outside of _beginDraw() and _endDraw()?");
+            throw GCN_EXCEPTION("Clip stack is empty, perhaps you called a draw function outside of _beginDraw() and _endDraw()?");
         }
 
         const ClipRectangle& top = mClipStack.top();

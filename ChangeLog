@@ -18,6 +18,14 @@
   the same ways as classes are. For example, the Key constant LEFT_SHIFT is 
   now named LeftShift.
 
+Version 0.8.3
+=============
+
+* Added support for building with CMake (not binary compatible with autoconf)
+* Fixed TabbedArea to call logic on its tabs and active widget
+* Fixed Widget::isModalFocused and Widget::isModalMouseInputFocused to not
+  raise an exception when no FocusHandler is set
+* Link SDL, Allegro and GL backends with dependent libraries (autoconf)
 * Fixed handling of key events in the HGE backend
 
 Version 0.8.2

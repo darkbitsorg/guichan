@@ -1,12 +1,10 @@
 prefix=@prefix@
-exec_prefix=${prefix}
+exec_prefix=@exec_prefix@
 libdir=@libdir@
-includedir=${prefix}/include
+includedir=@includedir@
 
 Name: guichan
-Description: A portable C++ GUI library designed for games using Allegro, HGE, OpenGL, OpenLayer and/or SDL.
-Version: @VERSION@
-Requires:
-Conflicts:
+Description: A portable C++ GUI library
+Version: @PROJECT_VERSION@
 Libs: -L${libdir} -lguichan
 Cflags: -I${includedir}

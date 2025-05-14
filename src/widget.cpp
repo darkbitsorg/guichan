@@ -6,11 +6,11 @@
  * /______/ //______/ //_/ //_____/\ /_/ //_/ //_/ //_/ //_/ /|_/ /
  * \______\/ \______\/ \_\/ \_____\/ \_\/ \_\/ \_\/ \_\/ \_\/ \_\/
  *
- * Copyright (c) 2004 - 2008 Olof Naessén and Per Larsson
+ * Copyright (c) 2004 - 2008 Olof NaessÃ©n and Per Larsson
  *
  *
  * Per Larsson a.k.a finalman
- * Olof Naessén a.k.a jansem/yakslem
+ * Olof NaessÃ©n a.k.a jansem/yakslem
  *
  * Visit: http://guichan.sourceforge.net
  *
@@ -275,7 +275,7 @@ namespace gcn
     void Widget::requestFocus()
     {
         if (mFocusHandler == NULL)
-            throw GCN_EXCEPTION("No focushandler set (did you add the widget to the gui?).");
+            throw GCN_EXCEPTION("No focushandler set (requestFocus: did you add the widget to the gui?).");
 
         if (isFocusable())
             mFocusHandler->requestFocus(this);
@@ -546,7 +546,7 @@ namespace gcn
     void Widget::requestModalFocus()
     {
         if (mFocusHandler == NULL)
-            throw GCN_EXCEPTION("No focushandler set (did you add the widget to the gui?).");
+            throw GCN_EXCEPTION("No focushandler set (requestModalFocus: did you add the widget to the gui?).");
 
         mFocusHandler->requestModalFocus(this);
     }
@@ -554,7 +554,7 @@ namespace gcn
     void Widget::requestModalMouseInputFocus()
     {
         if (mFocusHandler == NULL)
-            throw GCN_EXCEPTION("No focushandler set (did you add the widget to the gui?).");
+            throw GCN_EXCEPTION("No focushandler set (requestModalMouseInputFocus: did you add the widget to the gui?).");
 
         mFocusHandler->requestModalMouseInputFocus(this);
     }
@@ -578,7 +578,7 @@ namespace gcn
     bool Widget::isModalFocused() const
     {
         if (mFocusHandler == NULL)
-            throw GCN_EXCEPTION("No focushandler set (did you add the widget to the gui?).");
+            return false;
 
         if (getParent() != NULL)
         {
@@ -592,7 +592,7 @@ namespace gcn
     bool Widget::isModalMouseInputFocused() const
     {
         if (mFocusHandler == NULL)
-            throw GCN_EXCEPTION("No focushandler set (did you add the widget to the gui?).");
+            return false;
 
         if (getParent() != NULL)
         {

@@ -1,6 +1,6 @@
 noinst_LTLIBRARIES = libguichan_widgets.la
 
-INCLUDES = -I$(top_srcdir)/include
+AM_CPPFLAGS = -I$(top_srcdir)/include
 
 # The Gui-chan library sources
 libguichan_widgets_la_SOURCES = \
@@ -20,4 +20,3 @@ libguichan_widgets_la_SOURCES = \
 	textbox.cpp		\
 	textfield.cpp		\
 	window.cpp
-

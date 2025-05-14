@@ -3,30 +3,16 @@
 echo "Generating build information using aclocal, autoheader, automake and autoconf"
 echo "This may take a while ..."
 
-# Touch the timestamps on all the files since CVS messes them up
-directory=`dirname $0`
+# Make sure the m4 directory exists
+mkdir -p m4
 
-touch $directory/*
-touch $directory/examples/*
-touch $directory/include/*
-touch $directory/include/guichan/*
-touch $directory/include/guichan/allegro/*
-touch $directory/include/guichan/opengl/*
-touch $directory/include/guichan/sdl/*
-touch $directory/include/guichan/widgets/*
-touch $directory/src/*
-touch $directory/src/allegro/*
-touch $directory/src/opengl/*
-touch $directory/src/sdl/*
-touch $directory/src/widgets/*
+# Run libtoolize first to ensure libtool files are in place
+libtoolize --force || { echo "libtoolize failed"; exit 1; }
 
 # Regenerate configuration files
-aclocal
-autoheader
-automake --foreign --include-deps --add-missing --copy
-libtoolize --force
-autoreconf -i
+aclocal || { echo "aclocal failed"; exit 1; }
+autoheader || { echo "autoheader failed"; exit 1; }
+automake --foreign --include-deps --add-missing --copy || { echo "automake failed"; exit 1; }
+autoreconf -i || { echo "autoreconf failed"; exit 1; }
 
-# Run configure for this platform
-#./configure $*
 echo "Now you are ready to run ./configure"

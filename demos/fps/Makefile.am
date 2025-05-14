@@ -1,6 +1,6 @@
 AUTOMAKE_OPTIONS = 1.4
 
-INCLUDES = -I$(top_srcdir)/include
+AM_CPPFLAGS = -I$(top_srcdir)/include
 
 SUBDIRS = images sound
 
@@ -20,5 +20,3 @@ guichanfpsdemo_SOURCES = 		\
 	src/fpsbutton.cpp
 
 guichanfpsdemo_LDADD = @GUICHANFPSDEMO_LIBS@
-
-
