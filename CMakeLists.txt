@@ -117,14 +117,12 @@ add_library(
   ${GUICHAN_SRC}
   ${GUICHAN_WIDGET_SRC})
 
-target_include_directories(${PROJECT_NAME} PUBLIC
-  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>)
+target_include_directories(
+  ${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+                         $<INSTALL_INTERFACE:include>)
 
-set_target_properties(
-  ${PROJECT_NAME}
-  PROPERTIES VERSION ${PROJECT_VERSION}
-             SOVERSION ${PROJECT_SOVERSION})
+set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION}
+                                                 SOVERSION ${PROJECT_SOVERSION})
 install(
   TARGETS ${PROJECT_NAME}
   EXPORT ${PROJECT_NAME}Targets
@@ -138,10 +136,8 @@ install(FILES ${GUICHAN_WIDGET_HEADERS} DESTINATION include/guichan/widgets/)
 install(FILES ${GUICHAN_CONTRIB_WIDGET_HEADERS}
         DESTINATION include/guichan/contrib/widgets/)
 
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/guichan.pc.in
-  ${CMAKE_CURRENT_BINARY_DIR}/guichan.pc
-  @ONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/guichan.pc.in
+               ${CMAKE_CURRENT_BINARY_DIR}/guichan.pc @ONLY)
 
 install(
   FILES ${CMAKE_CURRENT_BINARY_DIR}/guichan.pc
@@ -186,9 +182,8 @@ if(ENABLE_ALLEGRO)
   endif()
 
   set_target_properties(
-    ${PROJECT_NAME}_allegro
-    PROPERTIES VERSION ${PROJECT_VERSION}
-               SOVERSION ${PROJECT_SOVERSION})
+    ${PROJECT_NAME}_allegro PROPERTIES VERSION ${PROJECT_VERSION}
+                                       SOVERSION ${PROJECT_SOVERSION})
   install(
     TARGETS ${PROJECT_NAME}_allegro
     EXPORT ${PROJECT_NAME}Targets
@@ -201,14 +196,11 @@ if(ENABLE_ALLEGRO)
   install(FILES ${GUICHAN_ALLEGRO_CONTRIB_HEADERS}
           DESTINATION include/guichan/contrib/allegro/)
 
-  configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/guichan_allegro.pc.in
-    ${CMAKE_CURRENT_BINARY_DIR}/guichan_allegro.pc
-    @ONLY)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/guichan_allegro.pc.in
+                 ${CMAKE_CURRENT_BINARY_DIR}/guichan_allegro.pc @ONLY)
 
-  install(
-    FILES ${CMAKE_CURRENT_BINARY_DIR}/guichan_allegro.pc
-    DESTINATION lib/pkgconfig)
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/guichan_allegro.pc
+          DESTINATION lib/pkgconfig)
 endif()
 
 # The Guichan OpenGL extension library
@@ -249,29 +241,26 @@ if(ENABLE_OPENGL)
   endif()
 
   set_target_properties(
-    ${PROJECT_NAME}_opengl
-    PROPERTIES VERSION ${PROJECT_VERSION}
-               SOVERSION ${PROJECT_SOVERSION})
+    ${PROJECT_NAME}_opengl PROPERTIES VERSION ${PROJECT_VERSION}
+                                      SOVERSION ${PROJECT_SOVERSION})
   install(
     TARGETS ${PROJECT_NAME}_opengl
     EXPORT ${PROJECT_NAME}Targets
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib
     RUNTIME DESTINATION bin
-    INCLUDES DESTINATION include)
+    INCLUDES
+    DESTINATION include)
   install(FILES ${GUICHAN_OPENGL_HEADER} DESTINATION include/guichan/)
   install(FILES ${GUICHAN_OPENGL_HEADERS} DESTINATION include/guichan/opengl/)
   install(FILES ${GUICHAN_OPENGL_CONTRIB_HEADERS}
           DESTINATION include/guichan/contrib/opengl/)
 
-  configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/guichan_opengl.pc.in
-    ${CMAKE_CURRENT_BINARY_DIR}/guichan_opengl.pc
-    @ONLY)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/guichan_opengl.pc.in
+                 ${CMAKE_CURRENT_BINARY_DIR}/guichan_opengl.pc @ONLY)
 
-  install(
-    FILES ${CMAKE_CURRENT_BINARY_DIR}/guichan_opengl.pc
-    DESTINATION lib/pkgconfig)
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/guichan_opengl.pc
+          DESTINATION lib/pkgconfig)
 endif()
 
 # The Guichan SDL extension library
@@ -308,17 +297,16 @@ if(ENABLE_SDL)
     if(MINGW)
       target_link_libraries(
         ${PROJECT_NAME}_sdl PRIVATE ${MINGW32_LIBRARY} ${SDL_LIBRARY}
-        ${SDLIMAGE_LIBRARY} SDLmain)
+                                    ${SDLIMAGE_LIBRARY} SDLmain)
     else()
-      target_link_libraries(${PROJECT_NAME}_sdl PRIVATE ${SDL_LIBRARY}
-                            ${SDLIMAGE_LIBRARY} SDLmain)
+      target_link_libraries(${PROJECT_NAME}_sdl
+                            PRIVATE ${SDL_LIBRARY} ${SDLIMAGE_LIBRARY} SDLmain)
     endif()
   endif()
 
   set_target_properties(
-    ${PROJECT_NAME}_sdl
-    PROPERTIES VERSION ${PROJECT_VERSION}
-               SOVERSION ${PROJECT_SOVERSION})
+    ${PROJECT_NAME}_sdl PROPERTIES VERSION ${PROJECT_VERSION}
+                                   SOVERSION ${PROJECT_SOVERSION})
   install(
     TARGETS ${PROJECT_NAME}_sdl
     EXPORT ${PROJECT_NAME}Targets
@@ -331,14 +319,11 @@ if(ENABLE_SDL)
   install(FILES ${GUICHAN_SDL_CONTRIB_HEADERS}
           DESTINATION include/guichan/contrib/sdl/)
 
-  configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/guichan_sdl.pc.in
-    ${CMAKE_CURRENT_BINARY_DIR}/guichan_sdl.pc
-    @ONLY)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/guichan_sdl.pc.in
+                 ${CMAKE_CURRENT_BINARY_DIR}/guichan_sdl.pc @ONLY)
 
-  install(
-    FILES ${CMAKE_CURRENT_BINARY_DIR}/guichan_sdl.pc
-    DESTINATION lib/pkgconfig)
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/guichan_sdl.pc
+          DESTINATION lib/pkgconfig)
 endif()
 
 if(ENABLE_IRRLICHT)
@@ -388,9 +373,10 @@ if(ENABLE_IRRLICHT)
 endif()
 
 # Export targets for downstream projects
-install(EXPORT ${PROJECT_NAME}Targets
-        FILE ${PROJECT_NAME}Targets.cmake
-        DESTINATION lib/cmake/${PROJECT_NAME})
+install(
+  EXPORT ${PROJECT_NAME}Targets
+  FILE ${PROJECT_NAME}Targets.cmake
+  DESTINATION lib/cmake/${PROJECT_NAME})
 
 message(STATUS "Guichan ${PROJECT_VERSION} has been configured successfully!")
 message(STATUS "Build configuration:")
