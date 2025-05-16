@@ -12,11 +12,19 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y build-essential cmake liballegro4-dev libsdl1.2-dev libsdl-image1.2-dev
+        sudo apt-get install -y \
+          build-essential \
+          cmake \
+          liballegro4-dev \
+          libirrlicht-dev \
+          libsdl-image1.2-dev \
+          libsdl1.2-dev
     - name: Configure
       run: cmake -B build
     - name: Build
       run: cmake --build build
+    - name: Install
+      run: sudo cmake --install build
 
   build-macos:
     runs-on: macos-latest
