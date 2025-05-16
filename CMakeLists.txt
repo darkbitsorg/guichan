@@ -370,6 +370,12 @@ if(ENABLE_IRRLICHT)
   install(FILES ${GUICHAN_IRRLICHT_HEADER} DESTINATION include/guichan/)
   install(FILES ${GUICHAN_IRRLICHT_HEADERS}
           DESTINATION include/guichan/irrlicht/)
+
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/guichan_irrlicht.pc.in
+                 ${CMAKE_CURRENT_BINARY_DIR}/guichan_irrlicht.pc @ONLY)
+
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/guichan_irrlicht.pc
+          DESTINATION lib/pkgconfig)
 endif()
 
 # Export targets for downstream projects
