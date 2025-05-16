@@ -21,6 +21,7 @@ find_package(Allegro)
 find_package(OpenGL)
 find_package(SDL)
 find_package(SDL_image)
+find_package(Irrlicht)
 
 # Set default values for options
 set(SDL_DEFAULT OFF)
@@ -31,6 +32,7 @@ endif()
 option(ENABLE_ALLEGRO "Enable the Guichan Allegro extension" ${ALLEGRO_FOUND})
 option(ENABLE_OPENGL "Enable the Guichan OpenGL extension" ${OPENGL_FOUND})
 option(ENABLE_SDL "Enable the Guichan SDL extension" ${SDL_DEFAULT})
+option(ENABLE_IRRLICHT "Enable the Guichan Irrlicht extension" ${IRRLICHT_FOUND})
 
 option(BUILD_GUICHAN_SHARED
        "Build the Guichan core library as a shared library." ON)
@@ -43,6 +45,9 @@ option(BUILD_GUICHAN_OPENGL_SHARED
 
 option(BUILD_GUICHAN_SDL_SHARED
        "Build the Guichan SDL extension library as a shared library." ON)
+
+option(BUILD_GUICHAN_IRRLICHT_SHARED
+       "Build the Guichan Irrlicht extension library as a shared library." ON)
 
 # The Guichan core library
 file(GLOB GUICHAN_HEADER include/guichan.hpp)
@@ -336,6 +341,52 @@ if(ENABLE_SDL)
     DESTINATION lib/pkgconfig)
 endif()
 
+if(ENABLE_IRRLICHT)
+  if(NOT IRRLICHT_FOUND)
+    message(FATAL_ERROR "Irrlicht extension was enabled but Irrlicht library was not found")
+  endif()
+
+  # The Guichan Irrlicht extension source
+  file(GLOB GUICHAN_IRRLICHT_HEADER include/guichan/irrlicht.hpp)
+  file(GLOB GUICHAN_IRRLICHT_HEADERS include/guichan/irrlicht/*.hpp)
+  file(GLOB GUICHAN_IRRLICHT_SRC src/irrlicht/*.cpp)
+
+  # Grouping of the source for nicer display in IDEs such as Visual Studio
+  source_group(src/guichan FILES ${GUICHAN_IRRLICHT_HEADER})
+  source_group(src/guichan/irrlicht FILES ${GUICHAN_IRRLICHT_HEADERS}
+                                          ${GUICHAN_IRRLICHT_SRC})
+
+  if(BUILD_GUICHAN_IRRLICHT_SHARED)
+    set(GUICHAN_IRRLICHT_LIBRARY_TYPE SHARED)
+  else()
+    set(GUICHAN_IRRLICHT_LIBRARY_TYPE STATIC)
+  endif()
+
+  add_library(
+    ${PROJECT_NAME}_irrlicht
+    ${GUICHAN_IRRLICHT_LIBRARY_TYPE} ${GUICHAN_IRRLICHT_HEADER}
+    ${GUICHAN_IRRLICHT_HEADERS} ${GUICHAN_IRRLICHT_SRC})
+
+  target_include_directories(${PROJECT_NAME}_irrlicht PRIVATE ${IRRLICHT_INCLUDE_DIR})
+  target_link_libraries(${PROJECT_NAME}_irrlicht PRIVATE ${PROJECT_NAME})
+  if(WIN32)
+    target_link_libraries(${PROJECT_NAME}_irrlicht ${IRRLICHT_LIBRARY})
+  endif()
+  set_target_properties(
+    ${PROJECT_NAME}_irrlicht PROPERTIES VERSION ${PROJECT_VERSION}
+                                        SOVERSION ${PROJECT_SOVERSION})
+  install(
+    TARGETS ${PROJECT_NAME}_irrlicht
+    EXPORT ${PROJECT_NAME}Targets
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib
+    RUNTIME DESTINATION bin
+    INCLUDES DESTINATION include)
+  install(FILES ${GUICHAN_IRRLICHT_HEADER} DESTINATION include/guichan/)
+  install(FILES ${GUICHAN_IRRLICHT_HEADERS}
+          DESTINATION include/guichan/irrlicht/)
+endif()
+
 # Export targets for downstream projects
 install(EXPORT ${PROJECT_NAME}Targets
         FILE ${PROJECT_NAME}Targets.cmake
@@ -349,6 +400,7 @@ message(STATUS "  Extensions:")
 message(STATUS "    Allegro:        ${ENABLE_ALLEGRO}")
 message(STATUS "    OpenGL:         ${ENABLE_OPENGL}")
 message(STATUS "    SDL:            ${ENABLE_SDL}")
+message(STATUS "    Irrlicht:       ${ENABLE_IRRLICHT}")
 message(STATUS "")
 message(STATUS "  Library types:")
 message(STATUS "    Core library:   ${GUICHAN_LIBRARY_TYPE}")
@@ -360,5 +412,8 @@ if(ENABLE_OPENGL AND OPENGL_FOUND)
 endif()
 if(ENABLE_SDL AND SDL_FOUND AND SDLIMAGE_FOUND)
   message(STATUS "    SDL:            ${GUICHAN_SDL_LIBRARY_TYPE}")
+endif()
+if(ENABLE_IRRLICHT AND IRRLICHT_FOUND)
+  message(STATUS "    Irrlicht:       ${GUICHAN_IRRLICHT_LIBRARY_TYPE}")
 endif()
 message(STATUS "")
