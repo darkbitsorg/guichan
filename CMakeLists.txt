@@ -4,6 +4,7 @@ cmake_minimum_required(VERSION 3.12...3.30)
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMake/Modules)
 
 project(guichan VERSION 0.9.0 LANGUAGES CXX)
+include(GNUInstallDirs)
 
 # We're maintaining binary compatibility within minor releases at the moment
 set(PROJECT_SOVERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
@@ -11,8 +12,8 @@ set(PROJECT_SOVERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
 # Set up pkg-config variables
 set(prefix ${CMAKE_INSTALL_PREFIX})
 set(exec_prefix ${CMAKE_INSTALL_PREFIX})
-set(libdir ${CMAKE_INSTALL_PREFIX}/lib)
-set(includedir ${CMAKE_INSTALL_PREFIX}/include)
+set(libdir ${CMAKE_INSTALL_FULL_LIBDIR})
+set(includedir ${CMAKE_INSTALL_FULL_INCLUDEDIR})
 
 add_compile_definitions(GUICHAN_BUILD GUICHAN_EXTENSION_BUILD)
 
@@ -119,29 +120,29 @@ add_library(
 
 target_include_directories(
   ${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-                         $<INSTALL_INTERFACE:include>)
+                         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION}
                                                  SOVERSION ${PROJECT_SOVERSION})
 install(
   TARGETS ${PROJECT_NAME}
   EXPORT ${PROJECT_NAME}Targets
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib
-  RUNTIME DESTINATION bin
-  INCLUDES DESTINATION include)
-install(FILES ${GUICHAN_HEADER} DESTINATION include/)
-install(FILES ${GUICHAN_HEADERS} DESTINATION include/guichan/)
-install(FILES ${GUICHAN_WIDGET_HEADERS} DESTINATION include/guichan/widgets/)
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+  INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+install(FILES ${GUICHAN_HEADER} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/)
+install(FILES ${GUICHAN_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/guichan/)
+install(FILES ${GUICHAN_WIDGET_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/guichan/widgets/)
 install(FILES ${GUICHAN_CONTRIB_WIDGET_HEADERS}
-        DESTINATION include/guichan/contrib/widgets/)
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/guichan/contrib/widgets/)
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/guichan.pc.in
                ${CMAKE_CURRENT_BINARY_DIR}/guichan.pc @ONLY)
 
 install(
   FILES ${CMAKE_CURRENT_BINARY_DIR}/guichan.pc
-  DESTINATION lib/pkgconfig)
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 
 # The Guichan Allegro extension library
 if(ENABLE_ALLEGRO)
@@ -175,11 +176,7 @@ if(ENABLE_ALLEGRO)
     ${GUICHAN_ALLEGRO_SRC})
 
   target_include_directories(${PROJECT_NAME}_allegro PRIVATE ${ALLEGRO_INCLUDE_DIR})
-  target_link_libraries(${PROJECT_NAME}_allegro PRIVATE ${PROJECT_NAME})
-
-  if(WIN32)
-    target_link_libraries(${PROJECT_NAME}_allegro PRIVATE ${ALLEG_LIBRARY})
-  endif()
+  target_link_libraries(${PROJECT_NAME}_allegro PRIVATE ${PROJECT_NAME} ${ALLEGRO_LIBRARIES})
 
   set_target_properties(
     ${PROJECT_NAME}_allegro PROPERTIES VERSION ${PROJECT_VERSION}
@@ -187,20 +184,20 @@ if(ENABLE_ALLEGRO)
   install(
     TARGETS ${PROJECT_NAME}_allegro
     EXPORT ${PROJECT_NAME}Targets
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib
-    RUNTIME DESTINATION bin
-    INCLUDES DESTINATION include)
-  install(FILES ${GUICHAN_ALLEGRO_HEADER} DESTINATION include/guichan/)
-  install(FILES ${GUICHAN_ALLEGRO_HEADERS} DESTINATION include/guichan/allegro/)
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+  install(FILES ${GUICHAN_ALLEGRO_HEADER} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/guichan/)
+  install(FILES ${GUICHAN_ALLEGRO_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/guichan/allegro/)
   install(FILES ${GUICHAN_ALLEGRO_CONTRIB_HEADERS}
-          DESTINATION include/guichan/contrib/allegro/)
+          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/guichan/contrib/allegro/)
 
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/guichan_allegro.pc.in
                  ${CMAKE_CURRENT_BINARY_DIR}/guichan_allegro.pc @ONLY)
 
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/guichan_allegro.pc
-          DESTINATION lib/pkgconfig)
+          DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 endif()
 
 # The Guichan OpenGL extension library
@@ -234,11 +231,7 @@ if(ENABLE_OPENGL)
     ${GUICHAN_OPENGL_SRC})
 
   target_include_directories(${PROJECT_NAME}_opengl PRIVATE ${OPENGL_INCLUDE_DIR})
-  target_link_libraries(${PROJECT_NAME}_opengl PRIVATE ${PROJECT_NAME})
-
-  if(WIN32)
-    target_link_libraries(${PROJECT_NAME}_opengl PRIVATE ${OPENGL_LIBRARY})
-  endif()
+  target_link_libraries(${PROJECT_NAME}_opengl PRIVATE ${PROJECT_NAME} ${OPENGL_LIBRARIES})
 
   set_target_properties(
     ${PROJECT_NAME}_opengl PROPERTIES VERSION ${PROJECT_VERSION}
@@ -246,21 +239,20 @@ if(ENABLE_OPENGL)
   install(
     TARGETS ${PROJECT_NAME}_opengl
     EXPORT ${PROJECT_NAME}Targets
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib
-    RUNTIME DESTINATION bin
-    INCLUDES
-    DESTINATION include)
-  install(FILES ${GUICHAN_OPENGL_HEADER} DESTINATION include/guichan/)
-  install(FILES ${GUICHAN_OPENGL_HEADERS} DESTINATION include/guichan/opengl/)
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+  install(FILES ${GUICHAN_OPENGL_HEADER} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/guichan/)
+  install(FILES ${GUICHAN_OPENGL_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/guichan/opengl/)
   install(FILES ${GUICHAN_OPENGL_CONTRIB_HEADERS}
-          DESTINATION include/guichan/contrib/opengl/)
+          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/guichan/contrib/opengl/)
 
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/guichan_opengl.pc.in
                  ${CMAKE_CURRENT_BINARY_DIR}/guichan_opengl.pc @ONLY)
 
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/guichan_opengl.pc
-          DESTINATION lib/pkgconfig)
+          DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 endif()
 
 # The Guichan SDL extension library
@@ -291,16 +283,13 @@ if(ENABLE_SDL)
     ${GUICHAN_SDL_CONTRIB_HEADERS} ${GUICHAN_SDL_SRC})
 
   target_include_directories(${PROJECT_NAME}_sdl PRIVATE ${SDL_INCLUDE_DIR} ${SDLIMAGE_INCLUDE_DIR})
-  target_link_libraries(${PROJECT_NAME}_sdl PRIVATE ${PROJECT_NAME})
+  target_link_libraries(${PROJECT_NAME}_sdl PRIVATE ${PROJECT_NAME} ${SDL_LIBRARY} ${SDLIMAGE_LIBRARY})
 
   if(WIN32)
     if(MINGW)
-      target_link_libraries(
-        ${PROJECT_NAME}_sdl PRIVATE ${MINGW32_LIBRARY} ${SDL_LIBRARY}
-                                    ${SDLIMAGE_LIBRARY} SDLmain)
+      target_link_libraries(${PROJECT_NAME}_sdl PRIVATE ${MINGW32_LIBRARY} SDLmain)
     else()
-      target_link_libraries(${PROJECT_NAME}_sdl
-                            PRIVATE ${SDL_LIBRARY} ${SDLIMAGE_LIBRARY} SDLmain)
+      target_link_libraries(${PROJECT_NAME}_sdl PRIVATE SDLmain)
     endif()
   endif()
 
@@ -310,20 +299,20 @@ if(ENABLE_SDL)
   install(
     TARGETS ${PROJECT_NAME}_sdl
     EXPORT ${PROJECT_NAME}Targets
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib
-    RUNTIME DESTINATION bin
-    INCLUDES DESTINATION include)
-  install(FILES ${GUICHAN_SDL_HEADER} DESTINATION include/guichan/)
-  install(FILES ${GUICHAN_SDL_HEADERS} DESTINATION include/guichan/sdl/)
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+  install(FILES ${GUICHAN_SDL_HEADER} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/guichan/)
+  install(FILES ${GUICHAN_SDL_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/guichan/sdl/)
   install(FILES ${GUICHAN_SDL_CONTRIB_HEADERS}
-          DESTINATION include/guichan/contrib/sdl/)
+          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/guichan/contrib/sdl/)
 
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/guichan_sdl.pc.in
                  ${CMAKE_CURRENT_BINARY_DIR}/guichan_sdl.pc @ONLY)
 
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/guichan_sdl.pc
-          DESTINATION lib/pkgconfig)
+          DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 endif()
 
 if(ENABLE_IRRLICHT)
@@ -353,36 +342,34 @@ if(ENABLE_IRRLICHT)
     ${GUICHAN_IRRLICHT_HEADERS} ${GUICHAN_IRRLICHT_SRC})
 
   target_include_directories(${PROJECT_NAME}_irrlicht PRIVATE ${IRRLICHT_INCLUDE_DIR})
-  target_link_libraries(${PROJECT_NAME}_irrlicht PRIVATE ${PROJECT_NAME})
-  if(WIN32)
-    target_link_libraries(${PROJECT_NAME}_irrlicht ${IRRLICHT_LIBRARY})
-  endif()
+  target_link_libraries(${PROJECT_NAME}_irrlicht PRIVATE ${PROJECT_NAME} ${IRRLICHT_LIBRARIES})
+
   set_target_properties(
     ${PROJECT_NAME}_irrlicht PROPERTIES VERSION ${PROJECT_VERSION}
                                         SOVERSION ${PROJECT_SOVERSION})
   install(
     TARGETS ${PROJECT_NAME}_irrlicht
     EXPORT ${PROJECT_NAME}Targets
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib
-    RUNTIME DESTINATION bin
-    INCLUDES DESTINATION include)
-  install(FILES ${GUICHAN_IRRLICHT_HEADER} DESTINATION include/guichan/)
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+  install(FILES ${GUICHAN_IRRLICHT_HEADER} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/guichan/)
   install(FILES ${GUICHAN_IRRLICHT_HEADERS}
-          DESTINATION include/guichan/irrlicht/)
+          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/guichan/irrlicht/)
 
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/guichan_irrlicht.pc.in
                  ${CMAKE_CURRENT_BINARY_DIR}/guichan_irrlicht.pc @ONLY)
 
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/guichan_irrlicht.pc
-          DESTINATION lib/pkgconfig)
+          DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 endif()
 
 # Export targets for downstream projects
 install(
   EXPORT ${PROJECT_NAME}Targets
   FILE ${PROJECT_NAME}Targets.cmake
-  DESTINATION lib/cmake/${PROJECT_NAME})
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
 
 message(STATUS "Guichan ${PROJECT_VERSION} has been configured successfully!")
 message(STATUS "Build configuration:")
