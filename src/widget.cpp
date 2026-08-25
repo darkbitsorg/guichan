@@ -649,7 +649,7 @@ namespace gcn
 
     Rectangle Widget::getChildrenArea()
     {
-        return Rectangle(0, 0, 0, 0);
+        return Rectangle(0, 0, getWidth(), getHeight());
     }
 
     FocusHandler* Widget::_getInternalFocusHandler()
