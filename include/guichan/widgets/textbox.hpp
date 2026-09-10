@@ -51,12 +51,11 @@
 #include "guichan/keylistener.hpp"
 #include "guichan/mouselistener.hpp"
 #include "guichan/platform.hpp"
+#include "guichan/text.hpp"
 #include "guichan/widget.hpp"
 
 namespace gcn
 {
-    class Text;
-
     /**
      * An implementation of a text box where a user can enter text that contains of many lines.
      */
@@ -288,7 +287,7 @@ namespace gcn
         /**
          * Holds the text of the text box.
          */
-        Text* mText;
+        Text mText;
 
         /**
          * True if the text box is editable, false otherwise.

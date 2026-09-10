@@ -47,14 +47,13 @@
 #include "guichan/keylistener.hpp"
 #include "guichan/mouselistener.hpp"
 #include "guichan/platform.hpp"
+#include "guichan/text.hpp"
 #include "guichan/widget.hpp"
 
 #include <string>
 
 namespace gcn
 {
-    class Text;
-
     /**
      * An implementation of a text field where a user can enter a line of text.
      */
@@ -203,7 +202,7 @@ namespace gcn
         /**
          * Holds the text of the text field.
          */
-        Text* mText;
+        Text mText;
 
         /**
          * Holds the amount scrolled in x. If a user types more characters than
