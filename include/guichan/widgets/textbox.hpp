@@ -224,16 +224,6 @@ namespace gcn
         void removeCharacters(int count);
 
         /**
-         * Gets the text object holding the content and the caret of the
-         * text box. Useful for measuring the text or the caret with a
-         * font, for example when drawing a subclass.
-         *
-         * @return The text object of the text box.
-         * @since 0.9.0
-         */
-        const Text& getTextObject() const;
-
-        /**
          * Adds a row of text to the end of the text.
          *
          * @param row The row to add.

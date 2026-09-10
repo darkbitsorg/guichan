@@ -161,16 +161,6 @@ namespace gcn
          */
         void removeCharacters(int count);
 
-        /**
-         * Gets the text object holding the content and the caret of the
-         * text field. Useful for measuring the text or the caret with a
-         * font, for example when drawing a subclass.
-         *
-         * @return The text object of the text field.
-         * @since 0.9.0
-         */
-        const Text& getTextObject() const;
-
 
         // Inherited from Widget
 

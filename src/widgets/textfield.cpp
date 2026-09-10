@@ -118,18 +118,16 @@ namespace gcn
             graphics->drawRectangle(1, 1, getWidth() - 4, getHeight() - 4);
         }
 
-        const Text& text = getTextObject();
-
         if (isFocused() && isEditable())
         {
-            drawCaret(graphics, text.getCaretX(getFont()) - mXScroll);
+            drawCaret(graphics, mText->getCaretX(getFont()) - mXScroll);
         }
 
         graphics->setColor(getForegroundColor());
         graphics->setFont(getFont());
 
-        if (text.getNumberOfRows() != 0)
-            graphics->drawText(text.getRow(0), 1 - mXScroll, 1);
+        if (mText->getNumberOfRows() != 0)
+            graphics->drawText(mText->getRow(0), 1 - mXScroll, 1);
 
         graphics->popClipArea();
     }
@@ -273,10 +271,5 @@ namespace gcn
 
         mText->remove(count);
         fixScroll();
-    }
-
-    const Text& TextField::getTextObject() const
-    {
-        return *mText;
     }
 }

@@ -95,23 +95,21 @@ namespace gcn
             graphics->fillRectangle(0, 0, getWidth(), getHeight());
         }
 
-        const Text& text = getTextObject();
-
         if (isFocused() && isEditable())
         {
             drawCaret(graphics,
-                      text.getCaretX(getFont()),
-                      text.getCaretY(getFont()));
+                      mText->getCaretX(getFont()),
+                      mText->getCaretY(getFont()));
         }
 
         graphics->setColor(getForegroundColor());
         graphics->setFont(getFont());
 
         unsigned int i;
-        for (i = 0; i < text.getNumberOfRows(); i++)
+        for (i = 0; i < mText->getNumberOfRows(); i++)
         {
             // Move the text one pixel so we can have a caret before a letter.
-            graphics->drawText(text.getRow(i), 1, i * getFont()->getHeight());
+            graphics->drawText(mText->getRow(i), 1, i * getFont()->getHeight());
         }
     }
 
@@ -301,11 +299,6 @@ namespace gcn
         mText->remove(count);
         adjustSize();
         scrollToCaret();
-    }
-
-    const Text& TextBox::getTextObject() const
-    {
-        return *mText;
     }
 
     void TextBox::addRow(const std::string &row)
