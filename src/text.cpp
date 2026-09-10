@@ -306,10 +306,12 @@ namespace gcn
                 // need to merge two rows.
                 if (mCaretColumn == 0 && mCaretRow != 0)
                 {
+                    // The caret ends up where the two rows were joined.
+                    unsigned int column = mRows[mCaretRow - 1].size();
                     mRows[mCaretRow - 1] += mRows[mCaretRow];
                     mRows.erase(mRows.begin() + mCaretRow);
-                    setCaretRow(mCaretRow - 1);
-                    setCaretColumn(getNumberOfCharacters(mCaretRow));
+                    mCaretRow--;
+                    setCaretColumn(column);
                 }
                 else
                 {
