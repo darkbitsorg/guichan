@@ -344,23 +344,46 @@ namespace gcn
         unsigned int getNumberOfRows() const;
 
         /**
-         * Gets the number of characters in the text.
+         * Gets the number of characters in the text. A character is a
+         * Unicode code point, so this is not the same as the length in
+         * bytes for UTF-8 content. Line feeds between rows are counted
+         * as characters.
          *
          * @return The number of characters in the text.
+         * @see getNumberOfColumns
          * @since 0.9.0
          */
         unsigned int getNumberOfCharacters() const;
 
         /**
          * Gets the number of characters in a certain row in the text.
-         * If the row does not exist, zero will be returned.
+         * A character is a Unicode code point, so this is not the same
+         * as the length in bytes. Use getNumberOfColumns for the byte
+         * length, which is what caret columns are measured in. If the
+         * row does not exist, zero will be returned.
          *
          * @param row The row to get the number of characters in.
          * @return The number of characters in a certain row, or zero
          *         if the row does not exist.
+         * @see getNumberOfColumns
          * @since 0.9.0
          */
         unsigned int getNumberOfCharacters(unsigned int row) const;
+
+        /**
+         * Gets the number of columns in a certain row in the text, that
+         * is the length of the row in bytes. Caret columns are byte
+         * offsets, so this is the column right after the last character
+         * of the row. Use getNumberOfCharacters to count characters
+         * instead. If the row does not exist, zero will be returned.
+         *
+         * @param row The row to get the number of columns in.
+         * @return The number of columns in a certain row, or zero
+         *         if the row does not exist.
+         * @see getNumberOfCharacters
+         * @since 0.9.0
+         */
+        unsigned int getNumberOfColumns(unsigned int row) const;
 
         /**
          * Gets the column where the UTF-8 character before a given column

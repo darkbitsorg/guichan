@@ -538,10 +538,14 @@ namespace gcn
 
     unsigned int Text::getNumberOfCharacters() const
     {
-        unsigned int result = 0;
+        if (mRows.empty())
+            return 0;
+
+        // Count the line feeds between the rows.
+        unsigned int result = mRows.size() - 1;
         unsigned int i;
         for (i = 0; i < mRows.size(); ++i)
-            result += mRows[i].size() + 1;
+            result += getNumberOfCharacters(i);
 
         return result;
     }
@@ -552,6 +556,23 @@ namespace gcn
     }
 
     unsigned int Text::getNumberOfCharacters(unsigned int row) const
+    {
+        if (row >= mRows.size())
+           return 0;
+
+        const std::string& content = mRows[row];
+        unsigned int result = 0;
+        unsigned int column = 0;
+        while (column < content.size())
+        {
+            column = getNextCharacterColumn(content, column);
+            result++;
+        }
+
+        return result;
+    }
+
+    unsigned int Text::getNumberOfColumns(unsigned int row) const
     {
         if (row >= mRows.size())
            return 0;

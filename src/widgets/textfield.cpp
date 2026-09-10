@@ -178,7 +178,7 @@ namespace gcn
             mText.setCaretColumn(0);
 
         else if (key.getValue() == Key::End)
-            mText.setCaretColumn(mText.getNumberOfCharacters(0));
+            mText.setCaretColumn(mText.getNumberOfColumns(0));
 
         else if (key.isCharacter()
                  && key.getValue() != Key::Tab

@@ -150,7 +150,7 @@ namespace gcn
             mText.setCaretColumn(0);
 
         else if (key.getValue() == Key::End)
-            mText.setCaretColumn(mText.getNumberOfCharacters(mText.getCaretRow()));
+            mText.setCaretColumn(mText.getNumberOfColumns(mText.getCaretRow()));
 
         else if (key.getValue() == Key::Enter)
             insertText("\n");
