@@ -18,7 +18,9 @@ jobs:
           liballegro4-dev \
           libirrlicht-dev \
           libsdl-image1.2-dev \
-          libsdl1.2-dev
+          libsdl1.2-dev \
+          libsdl2-dev \
+          libsdl2-image-dev
     - name: Configure
       run: cmake -B build
     - name: Build
@@ -33,7 +35,7 @@ jobs:
     - name: Install dependencies
       run: |
         brew update
-        brew install cmake sdl12-compat
+        brew install cmake sdl12-compat sdl2 sdl2_image
     - name: Configure
       run: cmake -B build -DENABLE_OPENGL=OFF
     - name: Build
@@ -58,6 +60,8 @@ jobs:
           mingw-w64-x86_64-make
           mingw-w64-x86_64-SDL
           mingw-w64-x86_64-SDL_image
+          mingw-w64-x86_64-SDL2
+          mingw-w64-x86_64-SDL2_image
     - name: Configure
       run: cmake -B build
     - name: Build

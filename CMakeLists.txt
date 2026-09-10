@@ -22,6 +22,8 @@ find_package(Allegro)
 find_package(OpenGL)
 find_package(SDL)
 find_package(SDL_image)
+find_package(SDL2 CONFIG)
+find_package(SDL2_image CONFIG)
 find_package(Irrlicht)
 
 # Set default values for options
@@ -30,9 +32,15 @@ if(SDL_FOUND AND SDLIMAGE_FOUND)
   set(SDL_DEFAULT ON)
 endif()
 
+set(SDL2_DEFAULT OFF)
+if(SDL2_FOUND AND SDL2_image_FOUND)
+  set(SDL2_DEFAULT ON)
+endif()
+
 option(ENABLE_ALLEGRO "Enable the Guichan Allegro extension" ${ALLEGRO_FOUND})
 option(ENABLE_OPENGL "Enable the Guichan OpenGL extension" ${OPENGL_FOUND})
 option(ENABLE_SDL "Enable the Guichan SDL extension" ${SDL_DEFAULT})
+option(ENABLE_SDL2 "Enable the Guichan SDL2 extension" ${SDL2_DEFAULT})
 option(ENABLE_IRRLICHT "Enable the Guichan Irrlicht extension" ${IRRLICHT_FOUND})
 
 option(BUILD_GUICHAN_SHARED
@@ -46,6 +54,9 @@ option(BUILD_GUICHAN_OPENGL_SHARED
 
 option(BUILD_GUICHAN_SDL_SHARED
        "Build the Guichan SDL extension library as a shared library." ON)
+
+option(BUILD_GUICHAN_SDL2_SHARED
+       "Build the Guichan SDL2 extension library as a shared library." ON)
 
 option(BUILD_GUICHAN_IRRLICHT_SHARED
        "Build the Guichan Irrlicht extension library as a shared library." ON)
@@ -319,6 +330,62 @@ if(ENABLE_SDL)
           DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 endif()
 
+# The Guichan SDL2 extension library
+if(ENABLE_SDL2)
+  if(NOT SDL2_FOUND OR NOT SDL2_image_FOUND)
+    message(FATAL_ERROR "SDL2 extension was enabled but SDL2 or SDL2_image libraries were not found.")
+  endif()
+
+  # The Guichan SDL2 extension source
+  file(GLOB GUICHAN_SDL2_HEADER include/guichan/sdl2.hpp)
+  file(GLOB GUICHAN_SDL2_HEADERS include/guichan/sdl2/*.hpp)
+  file(GLOB GUICHAN_SDL2_SRC src/sdl2/*.cpp)
+
+  # Grouping of the source for nicer display in IDEs such as Visual Studio
+  source_group(src/guichan FILES ${GUICHAN_SDL2_HEADER})
+  source_group(src/guichan/sdl2 FILES ${GUICHAN_SDL2_HEADERS} ${GUICHAN_SDL2_SRC})
+
+  if(BUILD_GUICHAN_SDL2_SHARED)
+    set(GUICHAN_SDL2_LIBRARY_TYPE SHARED)
+  else()
+    set(GUICHAN_SDL2_LIBRARY_TYPE STATIC)
+  endif()
+  add_library(
+    ${PROJECT_NAME}_sdl2
+    ${GUICHAN_SDL2_LIBRARY_TYPE} ${GUICHAN_SDL2_HEADER} ${GUICHAN_SDL2_HEADERS}
+    ${GUICHAN_SDL2_SRC})
+
+  # Older SDL2 CMake configs only provide variables instead of a target
+  if(TARGET SDL2::SDL2)
+    set(GUICHAN_SDL2_LIBRARIES SDL2::SDL2)
+  else()
+    target_include_directories(${PROJECT_NAME}_sdl2 PRIVATE ${SDL2_INCLUDE_DIRS})
+    set(GUICHAN_SDL2_LIBRARIES ${SDL2_LIBRARIES})
+  endif()
+
+  target_link_libraries(${PROJECT_NAME}_sdl2 PRIVATE ${PROJECT_NAME}
+                        ${GUICHAN_SDL2_LIBRARIES} SDL2_image::SDL2_image)
+
+  set_target_properties(
+    ${PROJECT_NAME}_sdl2 PROPERTIES VERSION ${PROJECT_VERSION}
+                                    SOVERSION ${PROJECT_SOVERSION})
+  install(
+    TARGETS ${PROJECT_NAME}_sdl2
+    EXPORT ${PROJECT_NAME}Targets
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+  install(FILES ${GUICHAN_SDL2_HEADER} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/guichan/)
+  install(FILES ${GUICHAN_SDL2_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/guichan/sdl2/)
+
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/guichan_sdl2.pc.in
+                 ${CMAKE_CURRENT_BINARY_DIR}/guichan_sdl2.pc @ONLY)
+
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/guichan_sdl2.pc
+          DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+endif()
+
 if(ENABLE_IRRLICHT)
   if(NOT IRRLICHT_FOUND)
     message(FATAL_ERROR "Irrlicht extension was enabled but Irrlicht library was not found")
@@ -383,6 +450,7 @@ message(STATUS "  Extensions:")
 message(STATUS "    Allegro:        ${ENABLE_ALLEGRO}")
 message(STATUS "    OpenGL:         ${ENABLE_OPENGL}")
 message(STATUS "    SDL:            ${ENABLE_SDL}")
+message(STATUS "    SDL2:           ${ENABLE_SDL2}")
 message(STATUS "    Irrlicht:       ${ENABLE_IRRLICHT}")
 message(STATUS "")
 message(STATUS "  Library types:")
@@ -395,6 +463,9 @@ if(ENABLE_OPENGL AND OPENGL_FOUND)
 endif()
 if(ENABLE_SDL AND SDL_FOUND AND SDLIMAGE_FOUND)
   message(STATUS "    SDL:            ${GUICHAN_SDL_LIBRARY_TYPE}")
+endif()
+if(ENABLE_SDL2 AND SDL2_FOUND AND SDL2_image_FOUND)
+  message(STATUS "    SDL2:           ${GUICHAN_SDL2_LIBRARY_TYPE}")
 endif()
 if(ENABLE_IRRLICHT AND IRRLICHT_FOUND)
   message(STATUS "    Irrlicht:       ${GUICHAN_IRRLICHT_LIBRARY_TYPE}")
