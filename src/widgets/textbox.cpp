@@ -138,10 +138,10 @@ namespace gcn
         Key key = keyEvent.getKey();
 
         if (key.getValue() == Key::Left)
-            mText->setCaretPosition(mText->getCaretPosition() - 1);
-        
+            mText->moveCaretLeft();
+
         else if (key.getValue() == Key::Right)
-            mText->setCaretPosition(mText->getCaretPosition() + 1);
+            mText->moveCaretRight();
 
         else if (key.getValue() == Key::Down)
             mText->setCaretRow(mText->getCaretRow() + 1);
@@ -187,12 +187,7 @@ namespace gcn
         }
 
         else if(key.getValue() == Key::Tab && mEditable)
-        {
-            mText->insert(' ');
-            mText->insert(' ');
-            mText->insert(' ');
-            mText->insert(' ');
-        }
+            mText->insert("    ");
 
         else if (key.isCharacter() && mEditable)
             mText->insert(key.getValue());

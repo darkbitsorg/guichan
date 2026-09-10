@@ -164,10 +164,10 @@ namespace gcn
         Key key = keyEvent.getKey();
 
         if (key.getValue() == Key::Left)
-            mText->setCaretPosition(mText->getCaretPosition() - 1);
+            mText->moveCaretLeft();
 
         else if (key.getValue() == Key::Right)
-            mText->setCaretPosition(mText->getCaretPosition() + 1);
+            mText->moveCaretRight();
 
         else if (key.getValue() == Key::Delete && mEditable)
             mText->remove(1);
