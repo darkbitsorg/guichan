@@ -63,10 +63,13 @@ namespace gcn
         Key(int value = 0);
 
         /**
-         * Checks if a key is a character.
+         * Checks if a key is a character, that is a value that can be
+         * inserted into text. This is the case for printable ASCII
+         * (32 to 126), Tab, and every Unicode code point from 160 up to
+         * 0x10FFFF. Control characters and the special key values
+         * are not characters.
          *
-         * @return True if the key is a letter, number or whitespace,
-         *         false otherwise.
+         * @return True if the key is a character, false otherwise.
          */
         bool isCharacter() const;
 

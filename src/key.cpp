@@ -56,8 +56,10 @@ namespace gcn
 
     bool Key::isCharacter() const
     {
+        // Printable ASCII, Tab, and every Unicode code point above the
+        // C1 control range.
         return (mValue >= 32 && mValue <= 126)
-            || (mValue >= 162 && mValue <= 255)
+            || (mValue >= 160 && mValue <= 0x10FFFF)
             || (mValue == 9);
     }
 
