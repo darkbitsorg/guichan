@@ -55,9 +55,15 @@ namespace gcn
     class Font;
 
     /**
-     * A utility class to ease working with text in widgets such as 
+     * A utility class to ease working with text in widgets such as
      * TextBox and TextField. The class wraps common text operations
      * such as inserting and deleting text.
+     *
+     * The content is expected to be UTF-8 encoded. Caret positions and
+     * columns are byte offsets into the content, so they can be used to
+     * index the rows directly, but all editing and caret movement works
+     * on whole UTF-8 sequences and the caret is always kept at the start
+     * of a sequence.
      *
      * @since 0.9.0
      */
@@ -146,21 +152,34 @@ namespace gcn
         virtual std::string& getRow(unsigned int row);
 
         /**
-         * Inserts a character at the current caret position.
+         * Inserts a UTF-8 encoded string at the current caret position.
+         * Line feeds in the string split the current row. The caret is
+         * moved to the end of the inserted text.
          *
-         * @parameter character The character to insert.
+         * @param text The UTF-8 encoded text to insert.
+         * @since 0.9.0
+         */
+        virtual void insert(const std::string& text);
+
+        /**
+         * Inserts a character at the current caret position. The character
+         * is a Unicode code point which is UTF-8 encoded before insertion.
+         * Values outside of the range 0 to 0x10FFFF are ignored.
+         *
+         * @param character The Unicode code point to insert.
          * @since 0.9.0
          */
         virtual void insert(int character);
 
         /**
-         * Removes a given number of characters at starting
-         * at the current caret position. 
-         * 
-         * If the number of characters to remove is negative 
+         * Removes a given number of characters starting at the current
+         * caret position. A character is a whole UTF-8 sequence, so
+         * removing one character may remove several bytes.
+         *
+         * If the number of characters to remove is negative
          * characters will be removed left of the caret position.
          * If the number is positive characters will be removed
-         * right of the caret position. If a line feed is 
+         * right of the caret position. If a line feed is
          * removed the row with the line feed will be merged
          * with the row above the line feed.
          *
@@ -328,6 +347,31 @@ namespace gcn
          * @since 0.9.0
          */
         virtual unsigned int getNumberOfCharacters(unsigned int row) const;
+
+        /**
+         * Gets the column where the UTF-8 character before a given column
+         * starts. If the column is zero, zero is returned.
+         *
+         * @param row The content of the row.
+         * @param column The column to step back from.
+         * @return The column where the previous character starts.
+         * @since 0.9.0
+         */
+        static unsigned int getPreviousCharacterColumn(const std::string& row,
+                                                       unsigned int column);
+
+        /**
+         * Gets the column right after the UTF-8 character that starts at
+         * a given column. If the column is at the end of the row, the
+         * length of the row is returned.
+         *
+         * @param row The content of the row.
+         * @param column The column to step forward from.
+         * @return The column where the next character starts.
+         * @since 0.9.0
+         */
+        static unsigned int getNextCharacterColumn(const std::string& row,
+                                                   unsigned int column);
 
     protected:
 
