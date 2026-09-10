@@ -201,7 +201,6 @@ namespace gcn
                                      mFoldedUpHeight,
                                      getWidth(),
                                      getHeight() - mFoldedUpHeight);
-             //drawChildren(graphics);
          }
     }
 

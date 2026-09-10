@@ -967,7 +967,12 @@ namespace gcn
 
         graphics->pushClipArea(mDimension);
         draw(graphics);
+        drawChildren(graphics);
+        graphics->popClipArea();
+    }
 
+    void Widget::drawChildren(Graphics* graphics)
+    {
         const Rectangle& childrenArea = getChildrenArea();
         graphics->pushClipArea(childrenArea);
 
@@ -981,7 +986,6 @@ namespace gcn
                 widget->_draw(graphics);
         }
 
-        graphics->popClipArea();
         graphics->popClipArea();
     }
 

@@ -317,7 +317,6 @@ namespace gcn
 
         }
 
-        //drawChildren(graphics);
     }
 
     void TabbedArea::adjustSize()
