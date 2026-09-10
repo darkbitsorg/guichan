@@ -9,6 +9,10 @@ if WITH_SDL
 SUBDIRS += sdl
 endif
 
+if WITH_SDL2
+SUBDIRS += sdl2
+endif
+
 if WITH_OPENGL
 SUBDIRS += opengl
 endif
@@ -53,6 +57,7 @@ libguichaninclude_HEADERS =	\
 	selectionevent.hpp	\
 	selectionlistener.hpp	\
 	sdl.hpp			\
+	sdl2.hpp		\
 	text.hpp		\
 	textevent.hpp		\
 	textinput.hpp		\

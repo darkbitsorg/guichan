@@ -10,6 +10,7 @@ ALLEGRO="disabled"
 OPENGL="disabled"
 SDL="disabled"
 SDLIMAGE="disabled"
+SDL2="disabled"
 dnl GLUT="disabled"
 dnl X="disabled"
 
@@ -275,6 +276,19 @@ else
   AM_CONDITIONAL([WITH_SDL], [false])
 fi
 
+AC_ARG_ENABLE(sdl2,
+[  --enable-sdl2	  Enable SDL2 support [default=yes]],
+             , enable_sdl2=yes)
+if test x$enable_sdl2 = xyes; then
+  PKG_CHECK_MODULES([SDL2], [sdl2 SDL2_image], [SDL2="yes"], [
+    SDL2="no"
+    AC_MSG_WARN(SDL2 support skipped when SDL2 or SDL2_image not found.)
+  ])
+else
+  SDL2="no"
+fi
+AM_CONDITIONAL([WITH_SDL2], [test x$SDL2 = xyes])
+
 AC_CONFIG_FILES([
 Makefile
 guichan.pc
@@ -291,6 +305,7 @@ include/guichan/hge/Makefile
 include/guichan/opengl/Makefile
 include/guichan/openlayer/Makefile
 include/guichan/sdl/Makefile
+include/guichan/sdl2/Makefile
 include/guichan/widgets/Makefile
 src/Makefile
 src/allegro/Makefile
@@ -305,6 +320,8 @@ src/opengl/guichan_opengl.pc
 src/openlayer/Makefile
 src/sdl/Makefile
 src/sdl/guichan_sdl.pc
+src/sdl2/Makefile
+src/sdl2/guichan_sdl2.pc
 src/widgets/Makefile])
 AC_OUTPUT
 echo ""
@@ -322,4 +339,5 @@ echo "* OpenGL    = "$OPENGL
 echo "* OpenLayer = no (Requires static build and cannot be built)"
 echo "* SDL       = "$SDL
 echo "* SDL Image = "$SDLIMAGE
+echo "* SDL2      = "$SDL2
 echo "--------------------------------"

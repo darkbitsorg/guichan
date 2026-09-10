@@ -10,5 +10,6 @@ EXTRA_DIST = guichan.pc.in \
              guichan_irrlicht.pc.in \
              guichan_opengl.pc.in \
              guichan_sdl.pc.in \
+             guichan_sdl2.pc.in \
              CMakeLists.txt \
              CMake/Modules/FindAllegro.cmake
