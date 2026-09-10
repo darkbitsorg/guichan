@@ -23,11 +23,13 @@ have children, which removes the split between "widget" and "container widget".
   `mWidgetInstances`.
 * `Widget::getChildren()` is protected; `Container::getChildren()` is public.
 
-### `drawChildren()` and `logicChildren()` were removed
+### `logicChildren()` was removed, `drawChildren()` is called for you
 
-Children are now drawn and updated automatically by `Widget::_draw()` and
-`Widget::_logic()`, which the parent calls for you. Remove every call to
-`drawChildren(graphics)` and `logicChildren()`:
+Children are now updated automatically by `Widget::_logic()`, which the parent
+calls for you, so `logicChildren()` is gone. `drawChildren(graphics)` still
+exists as a protected virtual, but `Widget::_draw()` now calls it after
+`draw()` rather than leaving it to `draw()` to call. Remove every explicit call
+to `drawChildren(graphics)` and `logicChildren()`:
 
 ```c++
 // 0.8
@@ -44,8 +46,18 @@ void MyWidget::draw(gcn::Graphics *graphics)
 }
 ```
 
-If you overrode `drawChildren()` to wrap child drawing (for example to apply an
-extra clip rectangle), override `_draw()` instead.
+If you need to wrap child drawing (for example to apply an extra clip
+rectangle), override `drawChildren()` and call the base implementation, which
+pushes the children area as clip area and draws the visible children:
+
+```c++
+void MyScrollArea::drawChildren(gcn::Graphics *graphics)
+{
+    graphics->pushClipArea(getChildrenArea());
+    gcn::Widget::drawChildren(graphics);
+    graphics->popClipArea();
+}
+```
 
 ### `getChildrenArea()` still decides what is drawn
 
@@ -248,7 +260,9 @@ is hidden, removed or moved out from under the mouse still being exited.
 ## Porting checklist
 
 1. Drop `basiccontainer.hpp` includes, change `BasicContainer` bases to `Widget`.
-2. Remove all `drawChildren()` and `logicChildren()` calls.
+2. Remove all `drawChildren()` and `logicChildren()` calls; `_draw()` now calls
+   `drawChildren()` for you. To wrap child drawing, override `drawChildren()`
+   and call the base implementation.
 3. Keep any `getChildrenArea()` override that confines children to a smaller
    area; the full-area case is now the default and can be dropped.
 4. Rename `mWidgets` to `mChildren` in your container subclasses.
