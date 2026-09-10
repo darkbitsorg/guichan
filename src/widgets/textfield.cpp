@@ -118,17 +118,18 @@ namespace gcn
             graphics->drawRectangle(1, 1, getWidth() - 4, getHeight() - 4);
         }
 
+        const Text& text = getTextObject();
+
         if (isFocused() && isEditable())
         {
-            drawCaret(graphics, mText->getCaretX(getFont()) - mXScroll);
+            drawCaret(graphics, text.getCaretX(getFont()) - mXScroll);
         }
 
         graphics->setColor(getForegroundColor());
         graphics->setFont(getFont());
 
-        const Rectangle& dim = mText->getCaretDimension(getFont());
-        if (mText->getNumberOfRows() != 0)
-            graphics->drawText(mText->getRow(0), 1 - mXScroll, 1);
+        if (text.getNumberOfRows() != 0)
+            graphics->drawText(text.getRow(0), 1 - mXScroll, 1);
 
         graphics->popClipArea();
     }
@@ -169,11 +170,11 @@ namespace gcn
         else if (key.getValue() == Key::Right)
             mText->moveCaretRight();
 
-        else if (key.getValue() == Key::Delete && mEditable)
-            mText->remove(1);
+        else if (key.getValue() == Key::Delete)
+            removeCharacters(1);
 
-        else if (key.getValue() == Key::Backspace && mEditable)
-            mText->remove(-1);
+        else if (key.getValue() == Key::Backspace)
+            removeCharacters(-1);
 
         else if (key.getValue() == Key::Enter)
             distributeActionEvent();
@@ -254,5 +255,28 @@ namespace gcn
     void TextField::setEditable(bool editable)
     {
         mEditable = editable;
+    }
+
+    void TextField::insertText(const std::string& text)
+    {
+        if (!mEditable)
+            return;
+
+        mText->insert(text);
+        fixScroll();
+    }
+
+    void TextField::removeCharacters(int count)
+    {
+        if (!mEditable)
+            return;
+
+        mText->remove(count);
+        fixScroll();
+    }
+
+    const Text& TextField::getTextObject() const
+    {
+        return *mText;
     }
 }

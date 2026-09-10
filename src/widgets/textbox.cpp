@@ -95,21 +95,23 @@ namespace gcn
             graphics->fillRectangle(0, 0, getWidth(), getHeight());
         }
 
+        const Text& text = getTextObject();
+
         if (isFocused() && isEditable())
         {
-            drawCaret(graphics, 
-                      mText->getCaretX(getFont()), 
-                      mText->getCaretY(getFont()));
+            drawCaret(graphics,
+                      text.getCaretX(getFont()),
+                      text.getCaretY(getFont()));
         }
 
         graphics->setColor(getForegroundColor());
         graphics->setFont(getFont());
 
         unsigned int i;
-        for (i = 0; i < mText->getNumberOfRows(); i++)
+        for (i = 0; i < text.getNumberOfRows(); i++)
         {
             // Move the text one pixel so we can have a caret before a letter.
-            graphics->drawText(mText->getRow(i), 1, i * getFont()->getHeight());
+            graphics->drawText(text.getRow(i), 1, i * getFont()->getHeight());
         }
     }
 
@@ -155,14 +157,14 @@ namespace gcn
         else if (key.getValue() == Key::End)
             mText->setCaretColumn(mText->getNumberOfCharacters(mText->getCaretRow()));
 
-        else if (key.getValue() == Key::Enter && mEditable)
-            mText->insert('\n');
+        else if (key.getValue() == Key::Enter)
+            insertText("\n");
 
-        else if (key.getValue() == Key::Backspace && mEditable)
-            mText->remove(-1);
+        else if (key.getValue() == Key::Backspace)
+            removeCharacters(-1);
 
-        else if (key.getValue() == Key::Delete && mEditable)
-            mText->remove(1);
+        else if (key.getValue() == Key::Delete)
+            removeCharacters(1);
 
         else if(key.getValue() == Key::PageUp)
         {
@@ -186,8 +188,8 @@ namespace gcn
             }
         }
 
-        else if(key.getValue() == Key::Tab && mEditable)
-            mText->insert("    ");
+        else if(key.getValue() == Key::Tab)
+            insertText("    ");
 
         else if (key.isCharacter() && mEditable)
             mText->insert(key.getValue());
@@ -279,6 +281,31 @@ namespace gcn
     bool TextBox::isEditable() const
     {
         return mEditable;
+    }
+
+    void TextBox::insertText(const std::string& text)
+    {
+        if (!mEditable)
+            return;
+
+        mText->insert(text);
+        adjustSize();
+        scrollToCaret();
+    }
+
+    void TextBox::removeCharacters(int count)
+    {
+        if (!mEditable)
+            return;
+
+        mText->remove(count);
+        adjustSize();
+        scrollToCaret();
+    }
+
+    const Text& TextBox::getTextObject() const
+    {
+        return *mText;
     }
 
     void TextBox::addRow(const std::string &row)

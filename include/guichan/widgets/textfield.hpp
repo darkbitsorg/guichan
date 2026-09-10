@@ -138,6 +138,39 @@ namespace gcn
          */
         unsigned int getCaretPosition() const;
 
+        /**
+         * Inserts UTF-8 encoded text at the caret position and moves the
+         * caret to the end of the inserted text. Does nothing if the text
+         * field is not editable.
+         *
+         * @param text The UTF-8 encoded text to insert.
+         * @see removeCharacters, isEditable
+         * @since 0.9.0
+         */
+        void insertText(const std::string& text);
+
+        /**
+         * Removes a number of characters at the caret position. A negative
+         * count removes characters left of the caret, a positive count
+         * removes characters right of the caret. A character is a whole
+         * UTF-8 sequence. Does nothing if the text field is not editable.
+         *
+         * @param count The number of characters to remove.
+         * @see insertText, isEditable
+         * @since 0.9.0
+         */
+        void removeCharacters(int count);
+
+        /**
+         * Gets the text object holding the content and the caret of the
+         * text field. Useful for measuring the text or the caret with a
+         * font, for example when drawing a subclass.
+         *
+         * @return The text object of the text field.
+         * @since 0.9.0
+         */
+        const Text& getTextObject() const;
+
 
         // Inherited from Widget
 

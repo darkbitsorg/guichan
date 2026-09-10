@@ -200,6 +200,40 @@ namespace gcn
         void setEditable(bool editable);
 
         /**
+         * Inserts UTF-8 encoded text at the caret position and moves the
+         * caret to the end of the inserted text. Line feeds in the text
+         * start new rows. Does nothing if the text box is not editable.
+         *
+         * @param text The UTF-8 encoded text to insert.
+         * @see removeCharacters, isEditable
+         * @since 0.9.0
+         */
+        void insertText(const std::string& text);
+
+        /**
+         * Removes a number of characters at the caret position. A negative
+         * count removes characters left of the caret, a positive count
+         * removes characters right of the caret. A character is a whole
+         * UTF-8 sequence, and removing a line feed merges two rows. Does
+         * nothing if the text box is not editable.
+         *
+         * @param count The number of characters to remove.
+         * @see insertText, isEditable
+         * @since 0.9.0
+         */
+        void removeCharacters(int count);
+
+        /**
+         * Gets the text object holding the content and the caret of the
+         * text box. Useful for measuring the text or the caret with a
+         * font, for example when drawing a subclass.
+         *
+         * @return The text object of the text box.
+         * @since 0.9.0
+         */
+        const Text& getTextObject() const;
+
+        /**
          * Adds a row of text to the end of the text.
          *
          * @param row The row to add.
