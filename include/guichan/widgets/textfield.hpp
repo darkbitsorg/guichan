@@ -188,6 +188,33 @@ namespace gcn
         virtual void drawCaret(Graphics* graphics, int x);
 
         /**
+         * Gets the text as it should be drawn. The default implementation
+         * returns the text of the text field. Overload this method to draw
+         * something else than the stored text, for example a password field
+         * that returns one asterisk per character.
+         *
+         * The caret is placed by counting characters, so the returned string
+         * has to contain one character per character of the stored text,
+         * but the characters may use a different number of bytes.
+         *
+         * @return The text to draw.
+         * @see getCaretX
+         * @since 0.9.0
+         */
+        virtual std::string getDisplayText() const;
+
+        /**
+         * Gets the x coordinate of the caret in pixels, measured in the
+         * text returned by getDisplayText and not taking the horizontal
+         * scrolling into account.
+         *
+         * @return The x coordinate of the caret in pixels.
+         * @see getDisplayText
+         * @since 0.9.0
+         */
+        int getCaretX() const;
+
+        /**
          * Scrolls the text horizontally so that the caret shows if needed.
          * The method is used any time a user types in the text field so the
          * caret always will be shown.

@@ -117,16 +117,51 @@ namespace gcn
 
         if (isFocused() && isEditable())
         {
-            drawCaret(graphics, mText.getCaretX(getFont()) - mXScroll);
+            drawCaret(graphics, getCaretX() - mXScroll);
         }
 
         graphics->setColor(getForegroundColor());
         graphics->setFont(getFont());
-
-        if (mText.getNumberOfRows() != 0)
-            graphics->drawText(mText.getRow(0), 1 - mXScroll, 1);
+        graphics->drawText(getDisplayText(), 1 - mXScroll, 1);
 
         graphics->popClipArea();
+    }
+
+    std::string TextField::getDisplayText() const
+    {
+        if (mText.getNumberOfRows() == 0)
+            return std::string();
+
+        return mText.getRow(0);
+    }
+
+    int TextField::getCaretX() const
+    {
+        if (mText.getNumberOfRows() == 0)
+            return 0;
+
+        // Count the characters before the caret in the stored text.
+        const std::string& row = mText.getRow(0);
+        const unsigned int caretColumn = mText.getCaretColumn();
+        unsigned int characters = 0;
+        unsigned int column = 0;
+        while (column < caretColumn)
+        {
+            column = Text::getNextCharacterColumn(row, column);
+            characters++;
+        }
+
+        // Measure that many characters of the display text, which may
+        // use a different number of bytes per character.
+        const std::string displayText = getDisplayText();
+        column = 0;
+        while (characters > 0 && column < displayText.size())
+        {
+            column = Text::getNextCharacterColumn(displayText, column);
+            characters--;
+        }
+
+        return getFont()->getWidth(displayText.substr(0, column));
     }
 
     void TextField::drawCaret(Graphics* graphics, int x)
@@ -209,7 +244,7 @@ namespace gcn
     {
         if (isFocused())
         {
-            int caretX = mText.getCaretDimension(getFont()).x;
+            int caretX = getCaretX();
 
             if (caretX - mXScroll >= getWidth() - 4)
             {
