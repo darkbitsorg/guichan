@@ -232,6 +232,14 @@ namespace gcn
         mRows.erase(mRows.begin() + row);
     }
 
+    const std::string& Text::getRow(unsigned int row) const
+    {
+        if (row >= mRows.size())
+            throw GCN_EXCEPTION("Row out of bounds!");
+
+        return mRows[row];
+    }
+
     std::string& Text::getRow(unsigned int row)
     {
         if (row >= mRows.size())
@@ -368,8 +376,9 @@ namespace gcn
             if (position <= (int)(total + mRows[i].size()))
             {
                 mCaretRow = i;
-                mCaretColumn = position - total;
-                mCaretPosition = position;
+                // Clamps the column to a character boundary and
+                // recalculates the caret position from it.
+                setCaretColumn(position - total);
                 return;
             }
 
@@ -413,7 +422,58 @@ namespace gcn
         else
             mCaretColumn = column;
 
+        // Move back to the start of the UTF-8 sequence if the column
+        // landed inside of one.
+        if (!mRows.empty())
+        {
+            const std::string& row = mRows[mCaretRow];
+            while (mCaretColumn > 0
+                   && mCaretColumn < row.size()
+                   && isContinuationByte(row[mCaretColumn]))
+                mCaretColumn--;
+        }
+
         calculateCaretPositionFromRowAndColumn();
+    }
+
+    void Text::moveCaretLeft()
+    {
+        if (mRows.empty())
+            return;
+
+        if (mCaretColumn == 0)
+        {
+            if (mCaretRow == 0)
+                return;
+
+            mCaretRow--;
+            setCaretColumn(mRows[mCaretRow].size());
+        }
+        else
+        {
+            setCaretColumn(getPreviousCharacterColumn(mRows[mCaretRow],
+                                                      mCaretColumn));
+        }
+    }
+
+    void Text::moveCaretRight()
+    {
+        if (mRows.empty())
+            return;
+
+        if (mCaretColumn >= mRows[mCaretRow].size())
+        {
+            if (mCaretRow + 1 >= mRows.size())
+                return;
+
+            mCaretRow++;
+            setCaretColumn(0);
+        }
+        else
+        {
+            setCaretColumn(getNextCharacterColumn(mRows[mCaretRow],
+                                                  mCaretColumn));
+        }
     }
 
     void Text::setCaretRow(int row)

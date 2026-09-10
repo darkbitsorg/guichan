@@ -149,6 +149,19 @@ namespace gcn
          * @throws Exception when no such row exists.
          * @since 0.9.0
          */
+        virtual const std::string& getRow(unsigned int row) const;
+
+        /**
+         * Gets a mutable reference to a row. Changing the row through
+         * this reference bypasses the caret handling, so callers have to
+         * restore a valid caret afterwards, for example by calling
+         * setCaretPosition with the current caret position.
+         *
+         * @param row The row to get the content of.
+         * @return The reference to a row.
+         * @throws Exception when no such row exists.
+         * @since 0.9.0
+         */
         virtual std::string& getRow(unsigned int row);
 
         /**
@@ -198,7 +211,9 @@ namespace gcn
 
         /**
          * Sets the caret position. The position will be
-         * clamp to the dimension of the content.
+         * clamp to the dimension of the content. If the position
+         * lies inside of a UTF-8 sequence the caret is moved back
+         * to the start of that sequence.
          *
          * @param position The position of the caret.
          * @since 0.9.0
@@ -234,7 +249,9 @@ namespace gcn
 
         /**
          * Sets the column the caret should be in. The column
-         * will be clamp to the current row.
+         * will be clamp to the current row. If the column lies
+         * inside of a UTF-8 sequence the caret is moved back to
+         * the start of that sequence.
          *
          * @param column The column the caret should be in.
          * @since 0.9.0
@@ -254,6 +271,22 @@ namespace gcn
          * @since 0.9.0
          */
         virtual void setCaretRow(int row);
+
+        /**
+         * Moves the caret one character to the left. At the start of
+         * a row the caret moves to the end of the row above.
+         *
+         * @since 0.9.0
+         */
+        virtual void moveCaretLeft();
+
+        /**
+         * Moves the caret one character to the right. At the end of
+         * a row the caret moves to the start of the row below.
+         *
+         * @since 0.9.0
+         */
+        virtual void moveCaretRight();
 
         /**
          * Gets the x coordinate of the caret in pixels given a font.
