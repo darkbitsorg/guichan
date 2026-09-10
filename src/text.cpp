@@ -235,14 +235,6 @@ namespace gcn
         return mRows[row];
     }
 
-    std::string& Text::getRow(unsigned int row)
-    {
-        if (row >= mRows.size())
-            throw GCN_EXCEPTION("Row out of bounds!");
-
-        return mRows[row];
-    }
-
     void Text::insert(const std::string& text)
     {
         if (mRows.empty())

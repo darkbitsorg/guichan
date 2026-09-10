@@ -146,19 +146,6 @@ namespace gcn
         const std::string& getRow(unsigned int row) const;
 
         /**
-         * Gets a mutable reference to a row. Changing the row through
-         * this reference bypasses the caret handling, so callers have to
-         * restore a valid caret afterwards, for example by calling
-         * setCaretPosition with the current caret position.
-         *
-         * @param row The row to get the content of.
-         * @return The reference to a row.
-         * @throws Exception when no such row exists.
-         * @since 0.9.0
-         */
-        std::string& getRow(unsigned int row);
-
-        /**
          * Inserts a UTF-8 encoded string at the current caret position.
          * Line feeds in the string split the current row. The caret is
          * moved to the end of the inserted text.
