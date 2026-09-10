@@ -1072,6 +1072,11 @@ namespace gcn
         /**
          * Adds a child to the widget.
          *
+         * A widget can only have one parent. If the widget already has a
+         * parent (this widget or another one), it is removed from that
+         * parent first. Adding a widget that is already a child of this
+         * widget therefore moves it to the end of the child list.
+         *
          * THIS METHOD IS NOT SAFE TO CALL INSIDE A WIDGETS LOGIC FUNCTION
          * INSIDE ANY LISTER FUNCTIONS!
          *

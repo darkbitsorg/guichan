@@ -858,6 +858,12 @@ namespace gcn
 
     void Widget::add(Widget* widget)
     {
+        // A widget can only have one parent. Detach it from its current
+        // parent first (which may be this widget), so that mChildren never
+        // holds the same widget twice and no parent keeps a dangling pointer.
+        if (widget->getParent() != NULL)
+            widget->getParent()->remove(widget);
+
         mChildren.push_back(widget);
 
         if (mInternalFocusHandler == NULL)
