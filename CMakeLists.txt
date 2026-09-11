@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.12...3.30)
 
 # Path to local modules
-set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMake/Modules)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMake/Modules)
 
 project(guichan VERSION 0.9.0 LANGUAGES CXX)
 include(GNUInstallDirs)
@@ -17,7 +17,7 @@ set(includedir ${CMAKE_INSTALL_FULL_INCLUDEDIR})
 
 add_compile_definitions(GUICHAN_BUILD GUICHAN_EXTENSION_BUILD)
 
-# Find all dependencies first to check availability
+# Probe for optional dependencies first to pick the option defaults.
 find_package(Allegro)
 find_package(OpenGL)
 find_package(SDL)
