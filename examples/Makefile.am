@@ -24,6 +24,9 @@ EXTRA_DIST =                  		\
 	openlayer.hpp			\
 	openlayerwidgets.cpp		\
 	sdl.hpp				\
+	sdl2.hpp			\
+	sdl2helloworld.cpp		\
+	sdl2widgets.cpp			\
 	sdlaction.cpp			\
 	sdlhelloworld.cpp		\
 	sdlwidgets.cpp			\

@@ -12,6 +12,10 @@ if WITH_SDL
 SUBDIRS += sdl
 endif
 
+if WITH_SDL2
+SUBDIRS += sdl2
+endif
+
 if WITH_OPENGL
 SUBDIRS += opengl
 endif

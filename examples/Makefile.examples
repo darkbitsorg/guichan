@@ -1,6 +1,6 @@
 CFLAGS = -Werror -Wall -Wno-unused
 
-all: allegro openglallegro openglsdl sdl
+all: allegro openglallegro openglsdl sdl sdl2
 
 allegro:
 	g++ allegrohelloworld.cpp -o allegrohelloworld $(CFLAGS) \
@@ -34,8 +34,15 @@ sdl:
 	g++ sdlaction.cpp -o sdlaction $(CFLAGS) \
 	-lguichan_sdl -lguichan -lSDL_image `sdl-config --libs --cflags`
 
+sdl2:
+	g++ sdl2helloworld.cpp -o sdl2helloworld $(CFLAGS) \
+	-lguichan_sdl2 -lguichan -lSDL2_image `sdl2-config --libs --cflags`
+	g++ sdl2widgets.cpp -o sdl2widgets $(CFLAGS) \
+	-lguichan_sdl2 -lguichan -lSDL2_image `sdl2-config --libs --cflags`
+
 clean:
 	rm -f allegroaction allegrohelloworld allegrowidgets
 	rm -f openglallegroaction openglallegrohelloworld openglallegrowidgets
 	rm -f openglsdlaction openglsdlhelloworld openglsdlwidgets
 	rm -f sdlaction sdlhelloworld sdlwidgets
+	rm -f sdl2helloworld sdl2widgets
