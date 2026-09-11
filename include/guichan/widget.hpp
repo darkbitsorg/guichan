@@ -903,11 +903,17 @@ namespace gcn
 
         /**
          * Gets the area of the widget occupied by the widget's children.
-         * By default this method returns an empty rectangle as not all
-         * widgets are containers. If you want to make a container this
-         * method should return the area where the children resides. This
-         * method is used when drawing children of a widget when computing
-         * clip rectangles for the children.
+         * By default this method returns the whole area of the widget, so
+         * that any widget can act as a container without further ado. A
+         * widget that wants to confine its children to a smaller area, for
+         * instance to leave room for a frame or a title bar, should override
+         * this method. This method is used when drawing children of a widget
+         * when computing clip rectangles for the children.
+         *
+         * NOTE: Children outside of the children area are neither drawn nor
+         *       considered when looking up the widget under the mouse, so a
+         *       widget that returns an empty rectangle here will appear to
+         *       have no children at all.
          *
          * NOTE: The returned rectangle should be relative to the widget,
          *       i.e a rectangle with x and y coordinate (0,0) and with
