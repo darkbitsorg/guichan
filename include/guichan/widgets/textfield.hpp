@@ -47,14 +47,13 @@
 #include "guichan/keylistener.hpp"
 #include "guichan/mouselistener.hpp"
 #include "guichan/platform.hpp"
+#include "guichan/text.hpp"
 #include "guichan/widget.hpp"
 
 #include <string>
 
 namespace gcn
 {
-    class Text;
-
     /**
      * An implementation of a text field where a user can enter a line of text.
      */
@@ -138,6 +137,29 @@ namespace gcn
          */
         unsigned int getCaretPosition() const;
 
+        /**
+         * Inserts UTF-8 encoded text at the caret position and moves the
+         * caret to the end of the inserted text. Does nothing if the text
+         * field is not editable.
+         *
+         * @param text The UTF-8 encoded text to insert.
+         * @see removeCharacters, isEditable
+         * @since 0.9.0
+         */
+        void insertText(const std::string& text);
+
+        /**
+         * Removes a number of characters at the caret position. A negative
+         * count removes characters left of the caret, a positive count
+         * removes characters right of the caret. A character is a whole
+         * UTF-8 sequence. Does nothing if the text field is not editable.
+         *
+         * @param count The number of characters to remove.
+         * @see insertText, isEditable
+         * @since 0.9.0
+         */
+        void removeCharacters(int count);
+
 
         // Inherited from Widget
 
@@ -166,6 +188,33 @@ namespace gcn
         virtual void drawCaret(Graphics* graphics, int x);
 
         /**
+         * Gets the text as it should be drawn. The default implementation
+         * returns the text of the text field. Overload this method to draw
+         * something else than the stored text, for example a password field
+         * that returns one asterisk per character.
+         *
+         * The caret is placed by counting characters, so the returned string
+         * has to contain one character per character of the stored text,
+         * but the characters may use a different number of bytes.
+         *
+         * @return The text to draw.
+         * @see getCaretX
+         * @since 0.9.0
+         */
+        virtual std::string getDisplayText() const;
+
+        /**
+         * Gets the x coordinate of the caret in pixels, measured in the
+         * text returned by getDisplayText and not taking the horizontal
+         * scrolling into account.
+         *
+         * @return The x coordinate of the caret in pixels.
+         * @see getDisplayText
+         * @since 0.9.0
+         */
+        int getCaretX() const;
+
+        /**
          * Scrolls the text horizontally so that the caret shows if needed.
          * The method is used any time a user types in the text field so the
          * caret always will be shown.
@@ -180,7 +229,7 @@ namespace gcn
         /**
          * Holds the text of the text field.
          */
-        Text* mText;
+        Text mText;
 
         /**
          * Holds the amount scrolled in x. If a user types more characters than

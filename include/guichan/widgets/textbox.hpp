@@ -51,12 +51,11 @@
 #include "guichan/keylistener.hpp"
 #include "guichan/mouselistener.hpp"
 #include "guichan/platform.hpp"
+#include "guichan/text.hpp"
 #include "guichan/widget.hpp"
 
 namespace gcn
 {
-    class Text;
-
     /**
      * An implementation of a text box where a user can enter text that contains of many lines.
      */
@@ -200,6 +199,30 @@ namespace gcn
         void setEditable(bool editable);
 
         /**
+         * Inserts UTF-8 encoded text at the caret position and moves the
+         * caret to the end of the inserted text. Line feeds in the text
+         * start new rows. Does nothing if the text box is not editable.
+         *
+         * @param text The UTF-8 encoded text to insert.
+         * @see removeCharacters, isEditable
+         * @since 0.9.0
+         */
+        void insertText(const std::string& text);
+
+        /**
+         * Removes a number of characters at the caret position. A negative
+         * count removes characters left of the caret, a positive count
+         * removes characters right of the caret. A character is a whole
+         * UTF-8 sequence, and removing a line feed merges two rows. Does
+         * nothing if the text box is not editable.
+         *
+         * @param count The number of characters to remove.
+         * @see insertText, isEditable
+         * @since 0.9.0
+         */
+        void removeCharacters(int count);
+
+        /**
          * Adds a row of text to the end of the text.
          *
          * @param row The row to add.
@@ -264,7 +287,7 @@ namespace gcn
         /**
          * Holds the text of the text box.
          */
-        Text* mText;
+        Text mText;
 
         /**
          * True if the text box is editable, false otherwise.

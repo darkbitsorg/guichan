@@ -52,6 +52,55 @@
 
 namespace gcn
 {
+    namespace
+    {
+        /**
+         * Checks if a byte is a UTF-8 continuation byte, that is a byte
+         * that does not start a new character.
+         */
+        bool isContinuationByte(char c)
+        {
+            return (c & 0xC0) == 0x80;
+        }
+
+        /**
+         * Encodes a Unicode code point as UTF-8. Values outside of the
+         * range 0 to 0x10FFFF result in an empty string.
+         */
+        std::string encodeUtf8(int character)
+        {
+            std::string result;
+
+            if (character < 0)
+                return result;
+
+            if (character < 0x80)
+            {
+                result += (char)character;
+            }
+            else if (character < 0x800)
+            {
+                result += (char)(0xC0 | (character >> 6));
+                result += (char)(0x80 | (character & 0x3F));
+            }
+            else if (character < 0x10000)
+            {
+                result += (char)(0xE0 | (character >> 12));
+                result += (char)(0x80 | ((character >> 6) & 0x3F));
+                result += (char)(0x80 | (character & 0x3F));
+            }
+            else if (character <= 0x10FFFF)
+            {
+                result += (char)(0xF0 | (character >> 18));
+                result += (char)(0x80 | ((character >> 12) & 0x3F));
+                result += (char)(0x80 | ((character >> 6) & 0x3F));
+                result += (char)(0x80 | (character & 0x3F));
+            }
+
+            return result;
+        }
+    }
+
     Text::Text()
         :mCaretPosition(0),
          mCaretRow(0),
@@ -80,11 +129,6 @@ namespace gcn
             lastPos = pos + 1;
         }
         while (pos != std::string::npos);
-    }
-
-    Text::~Text()
-    {
-
     }
 
     void Text::setContent(const std::string& content)
@@ -183,7 +227,7 @@ namespace gcn
         mRows.erase(mRows.begin() + row);
     }
 
-    std::string& Text::getRow(unsigned int row)
+    const std::string& Text::getRow(unsigned int row) const
     {
         if (row >= mRows.size())
             throw GCN_EXCEPTION("Row out of bounds!");
@@ -191,30 +235,42 @@ namespace gcn
         return mRows[row];
     }
 
+    void Text::insert(const std::string& text)
+    {
+        if (mRows.empty())
+            mRows.push_back(std::string());
+
+        std::string::size_type start = 0;
+
+        while (true)
+        {
+            std::string::size_type pos = text.find('\n', start);
+
+            // No more line feeds, insert the rest into the current row.
+            if (pos == std::string::npos)
+            {
+                mRows[mCaretRow].insert(mCaretColumn, text, start,
+                                        std::string::npos);
+                setCaretColumn(mCaretColumn + (text.size() - start));
+                return;
+            }
+
+            // A line feed splits the current row at the caret. The part
+            // after the caret becomes a new row below the current one.
+            std::string tail = mRows[mCaretRow].substr(mCaretColumn);
+            mRows[mCaretRow].erase(mCaretColumn);
+            mRows[mCaretRow].append(text, start, pos - start);
+            mRows.insert(mRows.begin() + mCaretRow + 1, tail);
+
+            mCaretRow++;
+            mCaretColumn = 0;
+            start = pos + 1;
+        }
+    }
+
     void Text::insert(int character)
     {
-        char c = (char)character;
-
-        if (mRows.empty())
-        {
-             if (c == '\n')
-                 mRows.push_back("");
-             else
-                 mRows.push_back(std::string(1, c));
-        }
-        else
-        {
-            if (c == '\n')
-            {
-                mRows.insert(mRows.begin() + mCaretRow + 1,
-                             mRows[mCaretRow].substr(mCaretColumn, mRows[mCaretRow].size() - mCaretColumn));
-                mRows[mCaretRow].resize(mCaretColumn);
-            }
-            else
-                mRows[mCaretRow].insert(mCaretColumn, std::string(1, c));
-        }
-
-        setCaretPosition(getCaretPosition() + 1);
+        insert(encodeUtf8(character));
     }
 
     void Text::remove(int numberOfCharacters)
@@ -232,20 +288,24 @@ namespace gcn
                 if (mCaretPosition == 0)
                     break;
 
-                // If we are at the end of the row
+                // If we are at the start of the row
                 // and the row is not the first row we
                 // need to merge two rows.
                 if (mCaretColumn == 0 && mCaretRow != 0)
                 {
+                    // The caret ends up where the two rows were joined.
+                    unsigned int column = mRows[mCaretRow - 1].size();
                     mRows[mCaretRow - 1] += mRows[mCaretRow];
                     mRows.erase(mRows.begin() + mCaretRow);
-                    setCaretRow(mCaretRow - 1);
-                    setCaretColumn(getNumberOfCharacters(mCaretRow));
+                    mCaretRow--;
+                    setCaretColumn(column);
                 }
                 else
                 {
-                    mRows[mCaretRow].erase(mCaretColumn - 1, 1);
-                    setCaretPosition(mCaretPosition - 1);
+                    unsigned int start = getPreviousCharacterColumn(
+                        mRows[mCaretRow], mCaretColumn);
+                    mRows[mCaretRow].erase(start, mCaretColumn - start);
+                    setCaretColumn(start);
                 }
 
                 numberOfCharacters++;
@@ -256,23 +316,24 @@ namespace gcn
         {
             while (numberOfCharacters != 0)
             {
-                // If all rows have been removed there is nothing
-                // more to do.
-                if (mRows.empty())
-                    break;
-
                 // If we are at the end of row and the row
                 // is not the last row we need to merge two
                 // rows.
-                if (mCaretColumn == mRows[mCaretRow].size()
-                    && mCaretRow < (mRows.size() - 1))
+                if (mCaretColumn == mRows[mCaretRow].size())
                 {
+                    // If this is the last row there is nothing
+                    // more to do.
+                    if (mCaretRow >= mRows.size() - 1)
+                        break;
+
                     mRows[mCaretRow] += mRows[mCaretRow + 1];
                     mRows.erase(mRows.begin() + mCaretRow + 1);
                 }
                 else
                 {
-                    mRows[mCaretRow].erase(mCaretColumn, 1);
+                    unsigned int end = getNextCharacterColumn(
+                        mRows[mCaretRow], mCaretColumn);
+                    mRows[mCaretRow].erase(mCaretColumn, end - mCaretColumn);
                 }
 
                 numberOfCharacters--;
@@ -304,8 +365,9 @@ namespace gcn
             if (position <= (int)(total + mRows[i].size()))
             {
                 mCaretRow = i;
-                mCaretColumn = position - total;
-                mCaretPosition = position;
+                // Clamps the column to a character boundary and
+                // recalculates the caret position from it.
+                setCaretColumn(position - total);
                 return;
             }
 
@@ -349,7 +411,58 @@ namespace gcn
         else
             mCaretColumn = column;
 
+        // Move back to the start of the UTF-8 sequence if the column
+        // landed inside of one.
+        if (!mRows.empty())
+        {
+            const std::string& row = mRows[mCaretRow];
+            while (mCaretColumn > 0
+                   && mCaretColumn < row.size()
+                   && isContinuationByte(row[mCaretColumn]))
+                mCaretColumn--;
+        }
+
         calculateCaretPositionFromRowAndColumn();
+    }
+
+    void Text::moveCaretLeft()
+    {
+        if (mRows.empty())
+            return;
+
+        if (mCaretColumn == 0)
+        {
+            if (mCaretRow == 0)
+                return;
+
+            mCaretRow--;
+            setCaretColumn(mRows[mCaretRow].size());
+        }
+        else
+        {
+            setCaretColumn(getPreviousCharacterColumn(mRows[mCaretRow],
+                                                      mCaretColumn));
+        }
+    }
+
+    void Text::moveCaretRight()
+    {
+        if (mRows.empty())
+            return;
+
+        if (mCaretColumn >= mRows[mCaretRow].size())
+        {
+            if (mCaretRow + 1 >= mRows.size())
+                return;
+
+            mCaretRow++;
+            setCaretColumn(0);
+        }
+        else
+        {
+            setCaretColumn(getNextCharacterColumn(mRows[mCaretRow],
+                                                  mCaretColumn));
+        }
     }
 
     void Text::setCaretRow(int row)
@@ -425,10 +538,14 @@ namespace gcn
 
     unsigned int Text::getNumberOfCharacters() const
     {
-        unsigned int result = 0;
+        if (mRows.empty())
+            return 0;
+
+        // Count the line feeds between the rows.
+        unsigned int result = mRows.size() - 1;
         unsigned int i;
         for (i = 0; i < mRows.size(); ++i)
-            result += mRows[i].size() + 1;
+            result += getNumberOfCharacters(i);
 
         return result;
     }
@@ -443,7 +560,55 @@ namespace gcn
         if (row >= mRows.size())
            return 0;
 
+        const std::string& content = mRows[row];
+        unsigned int result = 0;
+        unsigned int column = 0;
+        while (column < content.size())
+        {
+            column = getNextCharacterColumn(content, column);
+            result++;
+        }
+
+        return result;
+    }
+
+    unsigned int Text::getNumberOfColumns(unsigned int row) const
+    {
+        if (row >= mRows.size())
+           return 0;
+
         return mRows[row].size();
+    }
+
+    unsigned int Text::getPreviousCharacterColumn(const std::string& row,
+                                                  unsigned int column)
+    {
+        if (column > row.size())
+            column = row.size();
+
+        while (column > 0)
+        {
+            column--;
+
+            if (!isContinuationByte(row[column]))
+                break;
+        }
+
+        return column;
+    }
+
+    unsigned int Text::getNextCharacterColumn(const std::string& row,
+                                              unsigned int column)
+    {
+        if (column >= row.size())
+            return row.size();
+
+        column++;
+
+        while (column < row.size() && isContinuationByte(row[column]))
+            column++;
+
+        return column;
     }
 
     void Text::calculateCaretPositionFromRowAndColumn()

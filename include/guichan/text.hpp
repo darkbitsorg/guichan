@@ -55,9 +55,15 @@ namespace gcn
     class Font;
 
     /**
-     * A utility class to ease working with text in widgets such as 
+     * A utility class to ease working with text in widgets such as
      * TextBox and TextField. The class wraps common text operations
      * such as inserting and deleting text.
+     *
+     * The content is expected to be UTF-8 encoded. Caret positions and
+     * columns are byte offsets into the content, so they can be used to
+     * index the rows directly, but all editing and caret movement works
+     * on whole UTF-8 sequences and the caret is always kept at the start
+     * of a sequence.
      *
      * @since 0.9.0
      */
@@ -78,19 +84,13 @@ namespace gcn
         Text(const std::string& content);
 
         /**
-         * Destructor.
-         * @since 0.9.0
-         */
-        virtual ~Text();
-
-        /**
          * Sets the content of the text. Will completely remove 
          * any previous text and reset the caret position.
          *
          * @param content The content of the text.
          * @since 0.9.0
          */
-        virtual void setContent(const std::string& text);
+        void setContent(const std::string& text);
 
         /**
          * Gets the content of the text.
@@ -98,7 +98,7 @@ namespace gcn
          * @return The content of the text.
          * @since 0.9.0
          */
-        virtual std::string getContent() const;
+        std::string getContent() const;
 
         /**
          * Sets the content of a row.
@@ -107,7 +107,7 @@ namespace gcn
          * @throws Exception when the row does not exist.
          * @since 0.9.0
          */
-        virtual void setRow(unsigned int row, const std::string& content);
+        void setRow(unsigned int row, const std::string& content);
 
         /**
          * Adds a row to the content. Calling this method will
@@ -116,7 +116,7 @@ namespace gcn
          * @param row The row to add.
          * @since 0.9.0
          */
-        virtual void addRow(const std::string& row);
+        void addRow(const std::string& row);
 
         /**
          * Inserts a row before the specified row position. Calling this method
@@ -125,7 +125,7 @@ namespace gcn
          * @param row The row to add.
          * @param position Inserts new row before this row.
          */
-        virtual void insertRow(const std::string& row, unsigned int position);
+        void insertRow(const std::string& row, unsigned int position);
 
         /**
          * Erases the given row. Calling this method will not change the current
@@ -133,7 +133,7 @@ namespace gcn
          *
          * @param row Row to be erased.
          */
-        virtual void eraseRow(unsigned int row);
+        void eraseRow(unsigned int row);
 
         /**
          * Gets a reference to a row.
@@ -143,31 +143,44 @@ namespace gcn
          * @throws Exception when no such row exists.
          * @since 0.9.0
          */
-        virtual std::string& getRow(unsigned int row);
+        const std::string& getRow(unsigned int row) const;
 
         /**
-         * Inserts a character at the current caret position.
+         * Inserts a UTF-8 encoded string at the current caret position.
+         * Line feeds in the string split the current row. The caret is
+         * moved to the end of the inserted text.
          *
-         * @parameter character The character to insert.
+         * @param text The UTF-8 encoded text to insert.
          * @since 0.9.0
          */
-        virtual void insert(int character);
+        void insert(const std::string& text);
 
         /**
-         * Removes a given number of characters at starting
-         * at the current caret position. 
-         * 
-         * If the number of characters to remove is negative 
+         * Inserts a character at the current caret position. The character
+         * is a Unicode code point which is UTF-8 encoded before insertion.
+         * Values outside of the range 0 to 0x10FFFF are ignored.
+         *
+         * @param character The Unicode code point to insert.
+         * @since 0.9.0
+         */
+        void insert(int character);
+
+        /**
+         * Removes a given number of characters starting at the current
+         * caret position. A character is a whole UTF-8 sequence, so
+         * removing one character may remove several bytes.
+         *
+         * If the number of characters to remove is negative
          * characters will be removed left of the caret position.
          * If the number is positive characters will be removed
-         * right of the caret position. If a line feed is 
+         * right of the caret position. If a line feed is
          * removed the row with the line feed will be merged
          * with the row above the line feed.
          *
          * @param numberOfCharacters The number of characters to remove.
          * @since 0.9.0
          */
-        virtual void remove(int numberOfCharacters);
+        void remove(int numberOfCharacters);
 
         /**
          * Gets the caret position.
@@ -175,16 +188,18 @@ namespace gcn
          * @return The caret position.
          * @since 0.9.0
          */
-        virtual int getCaretPosition() const;
+        int getCaretPosition() const;
 
         /**
          * Sets the caret position. The position will be
-         * clamp to the dimension of the content.
+         * clamp to the dimension of the content. If the position
+         * lies inside of a UTF-8 sequence the caret is moved back
+         * to the start of that sequence.
          *
          * @param position The position of the caret.
          * @since 0.9.0
          */
-        virtual void setCaretPosition(int position);
+        void setCaretPosition(int position);
         
         /**
          * Sets the caret position given an x and y coordinate in pixels
@@ -195,7 +210,7 @@ namespace gcn
          * @param font The font to use when calculating the position.
          * @since 0.9.0
          */
-        virtual void setCaretPosition(int x, int y, Font* font);
+        void setCaretPosition(int x, int y, Font* font);
 
         /**
          * Gets the column the caret is currently in.
@@ -203,7 +218,7 @@ namespace gcn
          * @return The column the caret is currently in.
          * @since 0.9.0
          */
-        virtual int getCaretColumn() const;
+        int getCaretColumn() const;
 
         /**
          * Gets the row the caret is currently in.
@@ -211,16 +226,18 @@ namespace gcn
          * @return The row the caret is currently in.
          * @since 0.9.0
          */
-        virtual int getCaretRow() const;
+        int getCaretRow() const;
 
         /**
          * Sets the column the caret should be in. The column
-         * will be clamp to the current row.
+         * will be clamp to the current row. If the column lies
+         * inside of a UTF-8 sequence the caret is moved back to
+         * the start of that sequence.
          *
          * @param column The column the caret should be in.
          * @since 0.9.0
          */
-        virtual void setCaretColumn(int column);
+        void setCaretColumn(int column);
 
         /**
          * Sets the row the caret should be in. If the row lies o
@@ -234,7 +251,23 @@ namespace gcn
          * @param row The row the caret should be in.
          * @since 0.9.0
          */
-        virtual void setCaretRow(int row);
+        void setCaretRow(int row);
+
+        /**
+         * Moves the caret one character to the left. At the start of
+         * a row the caret moves to the end of the row above.
+         *
+         * @since 0.9.0
+         */
+        void moveCaretLeft();
+
+        /**
+         * Moves the caret one character to the right. At the end of
+         * a row the caret moves to the start of the row below.
+         *
+         * @since 0.9.0
+         */
+        void moveCaretRight();
 
         /**
          * Gets the x coordinate of the caret in pixels given a font.
@@ -243,7 +276,7 @@ namespace gcn
          * @return The x coorinate of the caret in pixels.
          * @since 0.9.0
          */
-        virtual int getCaretX(Font* font) const;
+        int getCaretX(Font* font) const;
 
         /**
          * Gets the y coordinate of the caret in pixels given a font.
@@ -252,7 +285,7 @@ namespace gcn
          * @return The y coorinate of the caret in pixels.
          * @since 0.9.0
          */
-        virtual int getCaretY(Font* font) const;
+        int getCaretY(Font* font) const;
 
         /**
          * Gets the dimension in pixels of the text given a font. If there
@@ -262,7 +295,7 @@ namespace gcn
          * @return The dimension in pixels of the text given a font.
          * @since 0.9.0
          */
-        virtual Rectangle getDimension(Font* font) const;
+        Rectangle getDimension(Font* font) const;
 
         /**
          * Gets the caret dimension relative to this text.
@@ -273,7 +306,7 @@ namespace gcn
          * @return The dimension of the caret.
          * @since 0.9.0
          */
-        virtual Rectangle getCaretDimension(Font* font) const;
+        Rectangle getCaretDimension(Font* font) const;
 
         /**
          * Gets the width in pixels of a row. If the row is not
@@ -283,7 +316,7 @@ namespace gcn
          * @return The width in pixels of a row.
          * @since 0.9.0
          */ 
-        virtual int getWidth(int row, Font* font) const;
+        int getWidth(int row, Font* font) const;
 
         /**
          * Gets the maximum row the caret can be in.
@@ -291,7 +324,7 @@ namespace gcn
          * @return The maximum row the caret can be in.
          * @since 0.9.0
          */
-        virtual unsigned int getMaximumCaretRow() const;
+        unsigned int getMaximumCaretRow() const;
 
         /**
          * Gets the maximum column of a row the caret can be in.
@@ -300,7 +333,7 @@ namespace gcn
          * @return The maximum column of a row the caret can be in.
          * @since 0.9.0
          */
-        virtual unsigned int getMaximumCaretRow(unsigned int row) const;
+        unsigned int getMaximumCaretRow(unsigned int row) const;
 
         /**
          * Gets the number of rows in the text.
@@ -308,26 +341,74 @@ namespace gcn
          * @return The number of rows in the text.
          * @since 0.9.0
          */
-        virtual unsigned int getNumberOfRows() const;
+        unsigned int getNumberOfRows() const;
 
         /**
-         * Gets the number of characters in the text.
+         * Gets the number of characters in the text. A character is a
+         * Unicode code point, so this is not the same as the length in
+         * bytes for UTF-8 content. Line feeds between rows are counted
+         * as characters.
          *
          * @return The number of characters in the text.
+         * @see getNumberOfColumns
          * @since 0.9.0
          */
-        virtual unsigned int getNumberOfCharacters() const;
+        unsigned int getNumberOfCharacters() const;
 
         /**
          * Gets the number of characters in a certain row in the text.
-         * If the row does not exist, zero will be returned.
+         * A character is a Unicode code point, so this is not the same
+         * as the length in bytes. Use getNumberOfColumns for the byte
+         * length, which is what caret columns are measured in. If the
+         * row does not exist, zero will be returned.
          *
          * @param row The row to get the number of characters in.
          * @return The number of characters in a certain row, or zero
          *         if the row does not exist.
+         * @see getNumberOfColumns
          * @since 0.9.0
          */
-        virtual unsigned int getNumberOfCharacters(unsigned int row) const;
+        unsigned int getNumberOfCharacters(unsigned int row) const;
+
+        /**
+         * Gets the number of columns in a certain row in the text, that
+         * is the length of the row in bytes. Caret columns are byte
+         * offsets, so this is the column right after the last character
+         * of the row. Use getNumberOfCharacters to count characters
+         * instead. If the row does not exist, zero will be returned.
+         *
+         * @param row The row to get the number of columns in.
+         * @return The number of columns in a certain row, or zero
+         *         if the row does not exist.
+         * @see getNumberOfCharacters
+         * @since 0.9.0
+         */
+        unsigned int getNumberOfColumns(unsigned int row) const;
+
+        /**
+         * Gets the column where the UTF-8 character before a given column
+         * starts. If the column is zero, zero is returned.
+         *
+         * @param row The content of the row.
+         * @param column The column to step back from.
+         * @return The column where the previous character starts.
+         * @since 0.9.0
+         */
+        static unsigned int getPreviousCharacterColumn(const std::string& row,
+                                                       unsigned int column);
+
+        /**
+         * Gets the column right after the UTF-8 character that starts at
+         * a given column. If the column is at the end of the row, the
+         * length of the row is returned.
+         *
+         * @param row The content of the row.
+         * @param column The column to step forward from.
+         * @return The column where the next character starts.
+         * @since 0.9.0
+         */
+        static unsigned int getNextCharacterColumn(const std::string& row,
+                                                   unsigned int column);
 
     protected:
 

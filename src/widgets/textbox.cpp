@@ -59,8 +59,6 @@ namespace gcn
         :mEditable(true),
          mOpaque(true)
     {
-        mText = new Text();
-
         setFocusable(true);
 
         addMouseListener(this);
@@ -69,11 +67,10 @@ namespace gcn
     }
 
     TextBox::TextBox(const std::string& text)
-        :mEditable(true),
+        :mText(text),
+         mEditable(true),
          mOpaque(true)
     {
-        mText = new Text(text);
-
         setFocusable(true);
 
         addMouseListener(this);
@@ -83,7 +80,7 @@ namespace gcn
 
     void TextBox::setText(const std::string& text)
     {
-        mText->setContent(text);
+        mText.setContent(text);
         adjustSize();
     }
 
@@ -97,19 +94,19 @@ namespace gcn
 
         if (isFocused() && isEditable())
         {
-            drawCaret(graphics, 
-                      mText->getCaretX(getFont()), 
-                      mText->getCaretY(getFont()));
+            drawCaret(graphics,
+                      mText.getCaretX(getFont()),
+                      mText.getCaretY(getFont()));
         }
 
         graphics->setColor(getForegroundColor());
         graphics->setFont(getFont());
 
         unsigned int i;
-        for (i = 0; i < mText->getNumberOfRows(); i++)
+        for (i = 0; i < mText.getNumberOfRows(); i++)
         {
             // Move the text one pixel so we can have a caret before a letter.
-            graphics->drawText(mText->getRow(i), 1, i * getFont()->getHeight());
+            graphics->drawText(mText.getRow(i), 1, i * getFont()->getHeight());
         }
     }
 
@@ -123,7 +120,7 @@ namespace gcn
     {
         if (mouseEvent.getButton() == MouseEvent::Left)
         {
-            mText->setCaretPosition(mouseEvent.getX(), mouseEvent.getY(), getFont());
+            mText.setCaretPosition(mouseEvent.getX(), mouseEvent.getY(), getFont());
             mouseEvent.consume();
         }
     }
@@ -138,31 +135,31 @@ namespace gcn
         Key key = keyEvent.getKey();
 
         if (key.getValue() == Key::Left)
-            mText->setCaretPosition(mText->getCaretPosition() - 1);
-        
+            mText.moveCaretLeft();
+
         else if (key.getValue() == Key::Right)
-            mText->setCaretPosition(mText->getCaretPosition() + 1);
+            mText.moveCaretRight();
 
         else if (key.getValue() == Key::Down)
-            mText->setCaretRow(mText->getCaretRow() + 1);
+            mText.setCaretRow(mText.getCaretRow() + 1);
 
         else if (key.getValue() == Key::Up)
-            mText->setCaretRow(mText->getCaretRow() - 1);
+            mText.setCaretRow(mText.getCaretRow() - 1);
 
         else if (key.getValue() == Key::Home)
-            mText->setCaretColumn(0);
+            mText.setCaretColumn(0);
 
         else if (key.getValue() == Key::End)
-            mText->setCaretColumn(mText->getNumberOfCharacters(mText->getCaretRow()));
+            mText.setCaretColumn(mText.getNumberOfColumns(mText.getCaretRow()));
 
-        else if (key.getValue() == Key::Enter && mEditable)
-            mText->insert('\n');
+        else if (key.getValue() == Key::Enter)
+            insertText("\n");
 
-        else if (key.getValue() == Key::Backspace && mEditable)
-            mText->remove(-1);
+        else if (key.getValue() == Key::Backspace)
+            removeCharacters(-1);
 
-        else if (key.getValue() == Key::Delete && mEditable)
-            mText->remove(1);
+        else if (key.getValue() == Key::Delete)
+            removeCharacters(1);
 
         else if(key.getValue() == Key::PageUp)
         {
@@ -171,7 +168,7 @@ namespace gcn
             if (par != NULL)
             {
                 int rowsPerPage = par->getChildrenArea().height / getFont()->getHeight();
-                mText->setCaretRow(mText->getCaretRow() - rowsPerPage);
+                mText.setCaretRow(mText.getCaretRow() - rowsPerPage);
             }
         }
 
@@ -182,20 +179,15 @@ namespace gcn
             if (par != NULL)
             {
                 int rowsPerPage = par->getChildrenArea().height / getFont()->getHeight();
-                mText->setCaretRow(mText->getCaretRow() + rowsPerPage);
+                mText.setCaretRow(mText.getCaretRow() + rowsPerPage);
             }
         }
 
-        else if(key.getValue() == Key::Tab && mEditable)
-        {
-            mText->insert(' ');
-            mText->insert(' ');
-            mText->insert(' ');
-            mText->insert(' ');
-        }
+        else if(key.getValue() == Key::Tab)
+            insertText("    ");
 
         else if (key.isCharacter() && mEditable)
-            mText->insert(key.getValue());
+            mText.insert(key.getValue());
 
         adjustSize();
         scrollToCaret();
@@ -205,65 +197,65 @@ namespace gcn
 
     void TextBox::adjustSize()
     {
-        const Rectangle& dim = mText->getDimension(getFont());
+        const Rectangle& dim = mText.getDimension(getFont());
         setSize(dim.width, dim.height);
     }
 
     void TextBox::setCaretPosition(unsigned int position)
     {
-        mText->setCaretPosition(position);
+        mText.setCaretPosition(position);
     }
 
     unsigned int TextBox::getCaretPosition() const
     {
-        return mText->getCaretPosition();
+        return mText.getCaretPosition();
     }
 
     void TextBox::setCaretRowColumn(int row, int column)
     {
-        mText->setCaretRow(row);
-        mText->setCaretColumn(column);
+        mText.setCaretRow(row);
+        mText.setCaretColumn(column);
     }
 
     void TextBox::setCaretRow(int row)
     {
-        mText->setCaretRow(row);
+        mText.setCaretRow(row);
     }
 
     unsigned int TextBox::getCaretRow() const
     {
-        return mText->getCaretRow();
+        return mText.getCaretRow();
     }
 
     void TextBox::setCaretColumn(int column)
     {
-        mText->setCaretColumn(column);
+        mText.setCaretColumn(column);
     }
 
     unsigned int TextBox::getCaretColumn() const
     {
-        return mText->getCaretColumn();
+        return mText.getCaretColumn();
     }
 
     std::string TextBox::getTextRow(int row) const
     {     
-        return mText->getRow(row);
+        return mText.getRow(row);
     }
 
     void TextBox::setTextRow(int row, const std::string& text)
     {
-        mText->setRow(row, text);
+        mText.setRow(row, text);
         adjustSize();
     }
 
     unsigned int TextBox::getNumberOfRows() const
     {
-        return mText->getNumberOfRows();
+        return mText.getNumberOfRows();
     }
 
     std::string TextBox::getText() const
     {
-        return mText->getContent();
+        return mText.getContent();
     }
 
     void TextBox::fontChanged()
@@ -273,7 +265,7 @@ namespace gcn
 
     void TextBox::scrollToCaret()
     {
-        showPart(mText->getCaretDimension(getFont()));
+        showPart(mText.getCaretDimension(getFont()));
     }
 
     void TextBox::setEditable(bool editable)
@@ -286,9 +278,29 @@ namespace gcn
         return mEditable;
     }
 
+    void TextBox::insertText(const std::string& text)
+    {
+        if (!mEditable)
+            return;
+
+        mText.insert(text);
+        adjustSize();
+        scrollToCaret();
+    }
+
+    void TextBox::removeCharacters(int count)
+    {
+        if (!mEditable)
+            return;
+
+        mText.remove(count);
+        adjustSize();
+        scrollToCaret();
+    }
+
     void TextBox::addRow(const std::string &row)
     {
-        mText->addRow(row);
+        mText.addRow(row);
         adjustSize();
     }
 
