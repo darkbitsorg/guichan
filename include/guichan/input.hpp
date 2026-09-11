@@ -50,6 +50,7 @@ namespace gcn
 {
     class KeyInput;
     class MouseInput;
+    class TextInput;
 
     /**
      * Abstract class for providing functions for user input. 
@@ -101,6 +102,45 @@ namespace gcn
          * @return The first mouse input in the mouse input queue.
          */
         virtual MouseInput dequeueMouseInput() = 0;
+
+        /**
+         * Checks if the back end delivers entered text through the text
+         * queue. When it does, the Gui distributes the dequeued text as
+         * text events and does not derive any text from key events.
+         * When it does not, the Gui synthesises a text event from each
+         * pressed key that represents a character.
+         *
+         * The default implementation returns false, so existing back ends
+         * keep working without changes.
+         *
+         * @return True if entered text is delivered through the text
+         *         queue, false otherwise.
+         * @see isTextQueueEmpty, dequeueTextInput, Gui::handleTextInput
+         * @since 0.9.0
+         */
+        virtual bool hasTextInput();
+
+        /**
+         * Checks if the text queue is empty, or not. The default
+         * implementation always reports an empty queue.
+         *
+         * @return True if the text queue is empty,
+         *         false otherwise.
+         * @see hasTextInput
+         * @since 0.9.0
+         */
+        virtual bool isTextQueueEmpty();
+
+        /**
+         * Dequeues the text input queue. The default implementation
+         * throws as its queue is always empty.
+         *
+         * @return The first text input in the text input queue.
+         * @throws Exception when the text queue is empty.
+         * @see hasTextInput
+         * @since 0.9.0
+         */
+        virtual TextInput dequeueTextInput();
 
         /**
          * Polls all exsisting input. Called when input should

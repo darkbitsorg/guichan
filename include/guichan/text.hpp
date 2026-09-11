@@ -410,6 +410,16 @@ namespace gcn
         static unsigned int getNextCharacterColumn(const std::string& row,
                                                    unsigned int column);
 
+        /**
+         * Encodes a Unicode code point as UTF-8. Values outside of the
+         * range 0 to 0x10FFFF result in an empty string.
+         *
+         * @param character The Unicode code point to encode.
+         * @return The UTF-8 encoding of the code point.
+         * @since 0.9.0
+         */
+        static std::string encodeUtf8(int character);
+
     protected:
 
         /**
