@@ -971,13 +971,18 @@ namespace gcn
         const Rectangle& childrenArea = getChildrenArea();
         graphics->pushClipArea(childrenArea);
 
+        // Child dimensions are relative to the children area, so compare
+        // them against the area placed at the origin rather than against
+        // the children area in this widget's own coordinates.
+        const Rectangle visibleArea(0, 0, childrenArea.width, childrenArea.height);
+
         std::list<Widget*>::const_iterator iter;
         for (iter = mChildren.begin(); iter != mChildren.end(); iter++)
         {
             Widget* widget = (*iter);
-            // Only draw a widget if it's visible and if it visible
+            // Only draw a widget if it's visible and if it is visible
             // inside the children area.
-            if (widget->isVisible() && childrenArea.isIntersecting(widget->getDimension()))
+            if (widget->isVisible() && visibleArea.isIntersecting(widget->getDimension()))
                 widget->_draw(graphics);
         }
 
