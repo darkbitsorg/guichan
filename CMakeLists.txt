@@ -88,6 +88,10 @@ file(
   include/guichan/rectangle.hpp
   include/guichan/selectionevent.hpp
   include/guichan/selectionlistener.hpp
+  include/guichan/text.hpp
+  include/guichan/textevent.hpp
+  include/guichan/textinput.hpp
+  include/guichan/textlistener.hpp
   include/guichan/widget.hpp
   include/guichan/widgetlistener.hpp)
 file(GLOB GUICHAN_WIDGET_HEADERS include/guichan/widgets/*.hpp)

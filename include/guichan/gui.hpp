@@ -51,6 +51,7 @@
 #include "guichan/mouseevent.hpp"
 #include "guichan/mouseinput.hpp"
 #include "guichan/platform.hpp"
+#include "guichan/textevent.hpp"
 
 namespace gcn
 {
@@ -86,7 +87,17 @@ namespace gcn
      *       able to load images an implementation of ImageLoader must be
      *       passed to Image.
      *
-     * @see Graphics, Input, Image
+     * Entered text reaches widgets as text events, separately from key
+     * events. A back end with native text input, such as one built on a
+     * library that reports entered text as UTF-8 strings, sets
+     * Input::hasTextInput to true and delivers whole strings through the
+     * text queue of its Input. For any other back end the Gui synthesises
+     * a text event from each pressed key that represents a character,
+     * as long as the key was not consumed by a key listener, it is not
+     * Tab, and none of control, alt or meta is held. See handleKeyInput
+     * and handleTextInput.
+     *
+     * @see Graphics, Input, Image, TextListener
      */
     class GCN_CORE_DECLSPEC Gui
     {
@@ -243,11 +254,26 @@ namespace gcn
         virtual void handleMouseInput();
 
         /**
-         * Handles key input.
+         * Handles key input. When the input back end has no native text
+         * input, a pressed key that represents a character and was not
+         * consumed by any key listener is also distributed as a text
+         * event to the focused widget, unless the key is Tab or control,
+         * alt or meta is held.
          *
+         * @see Input::hasTextInput
          * @since 0.6.0
          */
         virtual void handleKeyInput();
+
+        /**
+         * Handles text input. Every text input in the text queue of the
+         * input back end is distributed as a text event to the focused
+         * widget.
+         *
+         * @see Input::hasTextInput
+         * @since 0.9.0
+         */
+        virtual void handleTextInput();
 
         /**
          * Handles mouse moved input.
@@ -368,6 +394,16 @@ namespace gcn
          * @since 0.6.0
          */
         virtual void distributeKeyEventToGlobalKeyListeners(KeyEvent& keyEvent);
+
+        /**
+         * Distributes a text event. The event is sent to the text
+         * listeners of the source widget and then up the chain of parents
+         * until it has been consumed.
+         *
+         * @param textEvent The text event to distribute.
+         * @since 0.9.0
+         */
+        virtual void distributeTextEvent(TextEvent& textEvent);
 
         /**
          * Gets the widget at a certain position.

@@ -57,6 +57,7 @@
 #include "guichan/graphics.hpp"
 #include "guichan/keyinput.hpp"
 #include "guichan/keylistener.hpp"
+#include "guichan/textlistener.hpp"
 #include "guichan/mouseinput.hpp"
 #include "guichan/mouselistener.hpp"
 #include "guichan/widgetlistener.hpp"
@@ -421,6 +422,16 @@ namespace gcn
         mKeyListeners.remove(keyListener);
     }
 
+    void Widget::addTextListener(TextListener* textListener)
+    {
+        mTextListeners.push_back(textListener);
+    }
+
+    void Widget::removeTextListener(TextListener* textListener)
+    {
+        mTextListeners.remove(textListener);
+    }
+
     void Widget::addFocusListener(FocusListener* focusListener)
     {
         mFocusListeners.push_back(focusListener);
@@ -640,6 +651,11 @@ namespace gcn
     const std::list<KeyListener*>& Widget::_getKeyListeners()
     {
         return mKeyListeners;
+    }
+
+    const std::list<TextListener*>& Widget::_getTextListeners()
+    {
+        return mTextListeners;
     }
 
     const std::list<FocusListener*>& Widget::_getFocusListeners()

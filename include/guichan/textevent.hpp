@@ -41,77 +41,67 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GCN_GUICHAN_HPP
-#define GCN_GUICHAN_HPP
+#ifndef GCN_TEXTEVENT_HPP
+#define GCN_TEXTEVENT_HPP
 
-#include <guichan/actionevent.hpp>
-#include <guichan/actionlistener.hpp>
-#include <guichan/cliprectangle.hpp>
-#include <guichan/color.hpp>
-#include <guichan/containerevent.hpp>
-#include <guichan/containerlistener.hpp>
-#include <guichan/deathlistener.hpp>
-#include <guichan/event.hpp>
-#include <guichan/exception.hpp>
-#include <guichan/focushandler.hpp>
-#include <guichan/focuslistener.hpp>
-#include <guichan/font.hpp>
-#include <guichan/genericinput.hpp>
-#include <guichan/graphics.hpp>
-#include <guichan/gui.hpp>
-#include <guichan/image.hpp>
-#include <guichan/imagefont.hpp>
-#include <guichan/imageloader.hpp>
-#include <guichan/input.hpp>
-#include <guichan/inputevent.hpp>
-#include <guichan/key.hpp>
-#include <guichan/keyevent.hpp>
-#include <guichan/keyinput.hpp>
-#include <guichan/keylistener.hpp>
-#include <guichan/listmodel.hpp>
-#include <guichan/mouseevent.hpp>
-#include <guichan/mouseinput.hpp>
-#include <guichan/mouselistener.hpp>
-#include <guichan/rectangle.hpp>
-#include <guichan/selectionevent.hpp>
-#include <guichan/selectionlistener.hpp>
-#include <guichan/text.hpp>
-#include <guichan/textevent.hpp>
-#include <guichan/textinput.hpp>
-#include <guichan/textlistener.hpp>
-#include <guichan/widget.hpp>
-#include <guichan/widgetlistener.hpp>
-#include <guichan/widgets/button.hpp>
-#include <guichan/widgets/checkbox.hpp>
-#include <guichan/widgets/container.hpp>
-#include <guichan/widgets/dropdown.hpp>
-#include <guichan/widgets/icon.hpp>
-#include <guichan/widgets/imagebutton.hpp>
-#include <guichan/widgets/label.hpp>
-#include <guichan/widgets/listbox.hpp>
-#include <guichan/widgets/scrollarea.hpp>
-#include <guichan/widgets/slider.hpp>
-#include <guichan/widgets/radiobutton.hpp>
-#include <guichan/widgets/tab.hpp>
-#include <guichan/widgets/tabbedarea.hpp>
-#include <guichan/widgets/textbox.hpp>
-#include <guichan/widgets/textfield.hpp>
-#include <guichan/widgets/window.hpp>
-
+#include "guichan/inputevent.hpp"
 #include "guichan/platform.hpp"
 
+#include <string>
 
-class Widget;
-
-extern "C"
+namespace gcn
 {
+    class Widget;
+
     /**
-     * Gets the the version of Guichan. As it is a C function
-     * it can be used to check for Guichan with autotools.
+     * Represents a text event. A text event carries text entered by the
+     * user, as opposed to a KeyEvent which describes a single key going
+     * down or up. The text is UTF-8 encoded and may hold more than one
+     * character.
      *
-     * @return the version of Guichan.
+     * @see TextListener, Widget::addTextListener
+     * @since 0.9.0
      */
-    GCN_CORE_DECLSPEC extern const char* gcnGuichanVersion();
+    class GCN_CORE_DECLSPEC TextEvent: public InputEvent
+    {
+    public:
+        /**
+         * Constructor.
+         *
+         * @param source The widget the event concerns.
+         * @param distributor The distributor of the event.
+         * @param isShiftPressed True if shift is pressed, false otherwise.
+         * @param isControlPressed True if control is pressed, false otherwise.
+         * @param isAltPressed True if alt is pressed, false otherwise.
+         * @param isMetaPressed True if meta is pressed, false otherwise.
+         * @param text The UTF-8 encoded text of the event.
+         */
+        TextEvent(Widget* source,
+                  Widget* distributor,
+                  bool isShiftPressed,
+                  bool isControlPressed,
+                  bool isAltPressed,
+                  bool isMetaPressed,
+                  const std::string& text);
+
+        /**
+         * Destructor.
+         */
+        virtual ~TextEvent();
+
+        /**
+         * Gets the text of the event.
+         *
+         * @return The UTF-8 encoded text of the event.
+         */
+        const std::string& getText() const;
+
+    protected:
+        /**
+         * Holds the text of the text event.
+         */
+        std::string mText;
+    };
 }
 
-#endif // end GCN_GUICHAN_HPP
+#endif // end GCN_TEXTEVENT_HPP

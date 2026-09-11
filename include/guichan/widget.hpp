@@ -61,6 +61,7 @@ namespace gcn
     class Graphics;
     class KeyInput;
     class KeyListener;
+    class TextListener;
     class MouseInput;
     class MouseListener;
     class WidgetListener;
@@ -608,6 +609,26 @@ namespace gcn
         void removeKeyListener(KeyListener* keyListener);
 
         /**
+         * Adds a text listener to the widget. When a text event is
+         * fired by the widget the text listeners of the widget will
+         * get notified.
+         *
+         * @param textListener The text listener to add.
+         * @see removeTextListener
+         * @since 0.9.0
+         */
+        void addTextListener(TextListener* textListener);
+
+        /**
+         * Removes an added text listener from the widget.
+         *
+         * @param textListener The text listener to remove.
+         * @see addTextListener
+         * @since 0.9.0
+         */
+        void removeTextListener(TextListener* textListener);
+
+        /**
          * Adds a focus listener to the widget. When a focus event is 
          * fired by the widget the key listeners of the widget will 
          * get notified.
@@ -894,6 +915,14 @@ namespace gcn
         virtual const std::list<KeyListener*>& _getKeyListeners();
 
         /**
+         * Gets the text listeners of the widget.
+         *
+         * @return The text listeners of the widget.
+         * @since 0.9.0
+         */
+        virtual const std::list<TextListener*>& _getTextListeners();
+
+        /**
          * Gets the focus listeners of the widget.
          *
          * @return The focus listeners of the widget.
@@ -1141,6 +1170,11 @@ namespace gcn
          * Holds the key listeners of the widget.
          */
         std::list<KeyListener*> mKeyListeners;
+
+        /**
+         * Holds the text listeners of the widget.
+         */
+        std::list<TextListener*> mTextListeners;
 
         /** 
          * Holds the action listeners of the widget.

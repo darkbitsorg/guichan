@@ -62,43 +62,39 @@ namespace gcn
         {
             return (c & 0xC0) == 0x80;
         }
+    }
 
-        /**
-         * Encodes a Unicode code point as UTF-8. Values outside of the
-         * range 0 to 0x10FFFF result in an empty string.
-         */
-        std::string encodeUtf8(int character)
-        {
-            std::string result;
+    std::string Text::encodeUtf8(int character)
+    {
+        std::string result;
 
-            if (character < 0)
-                return result;
-
-            if (character < 0x80)
-            {
-                result += (char)character;
-            }
-            else if (character < 0x800)
-            {
-                result += (char)(0xC0 | (character >> 6));
-                result += (char)(0x80 | (character & 0x3F));
-            }
-            else if (character < 0x10000)
-            {
-                result += (char)(0xE0 | (character >> 12));
-                result += (char)(0x80 | ((character >> 6) & 0x3F));
-                result += (char)(0x80 | (character & 0x3F));
-            }
-            else if (character <= 0x10FFFF)
-            {
-                result += (char)(0xF0 | (character >> 18));
-                result += (char)(0x80 | ((character >> 12) & 0x3F));
-                result += (char)(0x80 | ((character >> 6) & 0x3F));
-                result += (char)(0x80 | (character & 0x3F));
-            }
-
+        if (character < 0)
             return result;
+
+        if (character < 0x80)
+        {
+            result += (char)character;
         }
+        else if (character < 0x800)
+        {
+            result += (char)(0xC0 | (character >> 6));
+            result += (char)(0x80 | (character & 0x3F));
+        }
+        else if (character < 0x10000)
+        {
+            result += (char)(0xE0 | (character >> 12));
+            result += (char)(0x80 | ((character >> 6) & 0x3F));
+            result += (char)(0x80 | (character & 0x3F));
+        }
+        else if (character <= 0x10FFFF)
+        {
+            result += (char)(0xF0 | (character >> 18));
+            result += (char)(0x80 | ((character >> 12) & 0x3F));
+            result += (char)(0x80 | ((character >> 6) & 0x3F));
+            result += (char)(0x80 | (character & 0x3F));
+        }
+
+        return result;
     }
 
     Text::Text()

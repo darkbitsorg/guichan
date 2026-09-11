@@ -43,6 +43,7 @@ libguichan_la_SOURCES = 	\
 	guichan.cpp		\
 	image.cpp		\
 	imagefont.cpp		\
+	input.cpp		\
 	inputevent.cpp		\
 	key.cpp			\
 	keyevent.cpp		\
@@ -52,4 +53,6 @@ libguichan_la_SOURCES = 	\
 	rectangle.cpp		\
 	selectionevent.cpp	\
 	text.cpp		\
+	textevent.cpp		\
+	textinput.cpp		\
 	widget.cpp

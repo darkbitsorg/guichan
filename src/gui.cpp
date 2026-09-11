@@ -55,6 +55,9 @@
 #include "guichan/keylistener.hpp"
 #include "guichan/mouseinput.hpp"
 #include "guichan/mouselistener.hpp"
+#include "guichan/text.hpp"
+#include "guichan/textinput.hpp"
+#include "guichan/textlistener.hpp"
 #include "guichan/widget.hpp"
 
 #include <algorithm>
@@ -142,6 +145,7 @@ namespace gcn
             mInput->_pollInput();
 
             handleKeyInput();
+            handleTextInput();
             handleMouseInput();
         }
 
@@ -282,6 +286,32 @@ namespace gcn
                 keyEventConsumed = keyEvent.isConsumed();
             }
 
+            // A back end without native text input never fills the text
+            // queue, so derive the entered text from a character key that
+            // no key listener acted on. Tab and keys pressed together with
+            // control, alt or meta are shortcuts rather than text.
+            if (!keyEventConsumed
+                && !mInput->hasTextInput()
+                && keyInput.getType() == KeyInput::Pressed
+                && keyInput.getKey().isCharacter()
+                && keyInput.getKey().getValue() != Key::Tab
+                && !mControlPressed
+                && !mAltPressed
+                && !mMetaPressed
+                && mFocusHandler->getFocused() != NULL)
+            {
+                Widget* source = getKeyEventSource();
+                TextEvent textEvent(source,
+                                    source,
+                                    mShiftPressed,
+                                    mControlPressed,
+                                    mAltPressed,
+                                    mMetaPressed,
+                                    Text::encodeUtf8(keyInput.getKey().getValue()));
+
+                distributeTextEvent(textEvent);
+            }
+
             // If the key event hasn't been consumed and
             // tabbing is enable check for tab press and
             // change focus.
@@ -295,6 +325,34 @@ namespace gcn
                 else
                     mFocusHandler->tabNext();
             }                           
+        }
+    }
+
+    void Gui::handleTextInput()
+    {
+        while (!mInput->isTextQueueEmpty())
+        {
+            TextInput textInput = mInput->dequeueTextInput();
+
+            if (mFocusHandler->getFocused() == NULL)
+                continue;
+
+            if (!mFocusHandler->getFocused()->isFocusable())
+            {
+                mFocusHandler->focusNone();
+                continue;
+            }
+
+            Widget* source = getKeyEventSource();
+            TextEvent textEvent(source,
+                                source,
+                                mShiftPressed,
+                                mControlPressed,
+                                mAltPressed,
+                                mMetaPressed,
+                                textInput.getText());
+
+            distributeTextEvent(textEvent);
         }
     }
 
@@ -746,6 +804,58 @@ namespace gcn
             // If a non modal focused widget has been reach
             // and we have modal focus cancel the distribution.
             if (mFocusHandler->getModalFocused() != NULL
+                && !widget->isModalFocused())
+                break;
+        }
+    }
+
+    void Gui::distributeTextEvent(TextEvent& textEvent)
+    {
+        Widget* parent = textEvent.getSource();
+        Widget* widget = textEvent.getSource();
+
+        if (mFocusHandler->getModalFocused() != NULL
+            && !widget->isModalFocused())
+            return;
+
+        if (mFocusHandler->getModalMouseInputFocused() != NULL
+            && !widget->isModalMouseInputFocused())
+            return;
+
+        while (parent != NULL)
+        {
+            // If the widget has been removed due to input
+            // cancel the distribution.
+            if (!Widget::widgetExists(widget))
+                break;
+
+            parent = widget->getParent();
+
+            if (widget->isEnabled())
+            {
+                textEvent.mDistributor = widget;
+                std::list<TextListener*> textListeners = widget->_getTextListeners();
+
+                // Send the event to all text listeners of the source widget.
+                for (std::list<TextListener*>::iterator it = textListeners.begin();
+                     it != textListeners.end();
+                     ++it)
+                {
+                    (*it)->textInput(textEvent);
+                }
+            }
+
+            if (textEvent.isConsumed())
+                break;
+
+            Widget* swap = widget;
+            widget = parent;
+            parent = swap->getParent();
+
+            // If a non modal focused widget has been reach
+            // and we have modal focus cancel the distribution.
+            if (mFocusHandler->getModalFocused() != NULL
+                && widget != NULL
                 && !widget->isModalFocused())
                 break;
         }
