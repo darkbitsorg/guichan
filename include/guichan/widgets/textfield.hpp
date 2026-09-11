@@ -48,6 +48,7 @@
 #include "guichan/mouselistener.hpp"
 #include "guichan/platform.hpp"
 #include "guichan/text.hpp"
+#include "guichan/textlistener.hpp"
 #include "guichan/widget.hpp"
 
 #include <string>
@@ -60,7 +61,8 @@ namespace gcn
     class GCN_CORE_DECLSPEC TextField:
         public Widget,
         public MouseListener,
-        public KeyListener
+        public KeyListener,
+        public TextListener
     {
     public:
         /**
@@ -176,6 +178,11 @@ namespace gcn
         // Inherited from KeyListener
 
         virtual void keyPressed(KeyEvent& keyEvent);
+
+
+        // Inherited from TextListener
+
+        virtual void textInput(TextEvent& textEvent);
 
     protected:
         /**

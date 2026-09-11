@@ -63,6 +63,7 @@ namespace gcn
 
         addMouseListener(this);
         addKeyListener(this);
+        addTextListener(this);
         adjustSize();
     }
 
@@ -75,6 +76,7 @@ namespace gcn
 
         addMouseListener(this);
         addKeyListener(this);
+        addTextListener(this);
         adjustSize();
     }
 
@@ -186,13 +188,21 @@ namespace gcn
         else if(key.getValue() == Key::Tab)
             insertText("    ");
 
-        else if (key.isCharacter() && mEditable)
-            mText.insert(key.getValue());
+        // Any other key is left alone: entered text arrives through
+        // textInput and unhandled keys may be meant for a parent.
+        else
+            return;
 
         adjustSize();
         scrollToCaret();
 
         keyEvent.consume();
+    }
+
+    void TextBox::textInput(TextEvent& textEvent)
+    {
+        insertText(textEvent.getText());
+        textEvent.consume();
     }
 
     void TextBox::adjustSize()

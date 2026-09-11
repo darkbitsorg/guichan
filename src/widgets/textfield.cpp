@@ -63,6 +63,7 @@ namespace gcn
 
         addMouseListener(this);
         addKeyListener(this);
+        addTextListener(this);
     }
 
     TextField::TextField(const std::string& text):
@@ -76,6 +77,7 @@ namespace gcn
 
         addMouseListener(this);
         addKeyListener(this);
+        addTextListener(this);
     }
 
     void TextField::setText(const std::string& text)
@@ -215,15 +217,19 @@ namespace gcn
         else if (key.getValue() == Key::End)
             mText.setCaretColumn(mText.getNumberOfColumns(0));
 
-        else if (key.isCharacter()
-                 && key.getValue() != Key::Tab
-                 && mEditable)
-            mText.insert(key.getValue());
+        // Any other key is left alone: entered text arrives through
+        // textInput and unhandled keys may be meant for a parent.
+        else
+            return;
 
-        if (key.getValue() != Key::Tab)
-            keyEvent.consume();
-
+        keyEvent.consume();
         fixScroll();
+    }
+
+    void TextField::textInput(TextEvent& textEvent)
+    {
+        insertText(textEvent.getText());
+        textEvent.consume();
     }
 
     void TextField::adjustSize()
