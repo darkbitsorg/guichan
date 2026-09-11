@@ -782,7 +782,6 @@ namespace gcn
         {
             getContent()->setPosition(-mHScroll + getContent()->getFrameSize(),
                                       -mVScroll + getContent()->getFrameSize());
-            getContent()->logic();
         }
     }
 
