@@ -316,8 +316,6 @@ namespace gcn
                                mTabContainer->getHeight());
 
         }
-
-        //drawChildren(graphics);
     }
 
     void TabbedArea::adjustSize()

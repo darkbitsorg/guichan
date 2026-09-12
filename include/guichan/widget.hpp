@@ -1040,6 +1040,23 @@ namespace gcn
 
     protected:
         /**
+         * Draws the children of the widget. Called by _draw after the
+         * widget's draw function has been called. The children area
+         * given by getChildrenArea is pushed as clip area and only
+         * visible children intersecting the children area are drawn.
+         *
+         * Subclasses that need to wrap the drawing of the children,
+         * for instance to apply an additional clip area, can overload
+         * this function. Overloaded functions should call the base
+         * implementation to have the children drawn.
+         *
+         * @param graphics A graphics object to draw with.
+         * @see draw, getChildrenArea
+         * @since 0.9.0
+         */
+        virtual void drawChildren(Graphics* graphics);
+
+        /**
          * Distributes an action event to all action listeners
          * of the widget.
          *
