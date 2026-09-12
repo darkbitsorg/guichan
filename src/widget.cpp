@@ -67,7 +67,7 @@ namespace gcn
 {
     Font* Widget::mGlobalFont = NULL;
     DefaultFont Widget::mDefaultFont;
-    std::list<Widget*> Widget::mWidgetInstances;
+    std::set<Widget*> Widget::mWidgetInstances;
 
     Widget::Widget()
             : mForegroundColor(0x000000),
@@ -85,7 +85,7 @@ namespace gcn
               mEnabled(true),
               mCurrentFont(NULL)
     {
-        mWidgetInstances.push_back(this);
+        mWidgetInstances.insert(this);
     }
 
     Widget::~Widget()
@@ -106,7 +106,7 @@ namespace gcn
 
         _setFocusHandler(NULL);
 
-        mWidgetInstances.remove(this);
+        mWidgetInstances.erase(this);
     }
 
     void Widget::drawFrame(Graphics* graphics)
@@ -486,7 +486,7 @@ namespace gcn
     {
         mGlobalFont = font;
 
-        std::list<Widget*>::iterator iter;
+        std::set<Widget*>::const_iterator iter;
         for (iter = mWidgetInstances.begin(); iter != mWidgetInstances.end(); ++iter)
         {
             if ((*iter)->mCurrentFont == NULL)
@@ -502,14 +502,9 @@ namespace gcn
 
     bool Widget::widgetExists(const Widget* widget)
     {
-        std::list<Widget*>::const_iterator iter;
-        for (iter = mWidgetInstances.begin(); iter != mWidgetInstances.end(); ++iter)
-        {
-            if (*iter == widget)
-                return true;
-        }
-
-        return false;
+        // The cast is safe as the widget is only used to look up a pointer.
+        return mWidgetInstances.find(const_cast<Widget*>(widget))
+                != mWidgetInstances.end();
     }
 
     bool Widget::isTabInEnabled() const
