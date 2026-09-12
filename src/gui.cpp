@@ -307,9 +307,7 @@ namespace gcn
         // below it before are remembered in mWidgetsWithMouse rather than
         // looked up again by coordinate, so that a widget which has since
         // been hidden, removed or moved away still gets its exited event.
-        if (mouseInput.getX() < 0
-            || mouseInput.getY() < 0
-            || !mTop->getDimension().isContaining(mouseInput.getX(), mouseInput.getY()))
+        if (!mTop->getDimension().isContaining(mouseInput.getX(), mouseInput.getY()))
         {
             // The mouse has left the application window, so nothing is below
             // it and everything that was entered is now exited.
@@ -564,13 +562,6 @@ namespace gcn
             widget->getAbsolutePosition(absoluteX, absoluteY);
             widget = widget->getWidgetAt(x - absoluteX, y - absoluteY);
         }
-    }
-
-    std::vector<Widget*> Gui::getWidgetsAt(int x, int y)
-    {
-        std::vector<Widget*> result;
-        collectWidgetsAt(x, y, result);
-        return result;
     }
 
     Widget* Gui::getMouseEventSource(int x, int y)

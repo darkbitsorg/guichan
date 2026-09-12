@@ -397,25 +397,16 @@ namespace gcn
          * Gets all widgets at a certain coordinate in the Gui, ordered from
          * the top widget down to the deepest widget at the coordinate.
          *
-         * @param x The x coordinate.
-         * @param y The y coordinate.
-         * @return All widgets at the specified coordinate, outermost first.
-         * @since 0.9.0
-         */
-        virtual std::vector<Widget*> getWidgetsAt(int x, int y);
-
-        /**
-         * Gets all widgets at a certain coordinate in the Gui into a caller
-         * supplied vector, ordered from the top widget down to the deepest
-         * widget at the coordinate. Used instead of getWidgetsAt on the hot
-         * paths, as reusing a vector avoids an allocation per mouse event.
+         * The result is placed in a vector supplied by the caller so that the
+         * same vector can be reused from one mouse event to the next, as this
+         * is called for every mouse event.
          *
          * @param x The x coordinate.
          * @param y The y coordinate.
          * @param result Cleared, then filled with the widgets found.
          * @since 0.9.0
          */
-        void collectWidgetsAt(int x, int y, std::vector<Widget*>& result);
+        virtual void collectWidgetsAt(int x, int y, std::vector<Widget*>& result);
 
         /**
          * Holds the top widget.
