@@ -45,6 +45,7 @@
 #define GCN_WIDGET_HPP
 
 #include <list>
+#include <set>
 #include <string>
 
 #include "guichan/color.hpp"
@@ -1266,9 +1267,11 @@ namespace gcn
         static Font* mGlobalFont;
 
         /**
-         * Holds a list of all instances of widgets.
+         * Holds all instances of widgets. A set rather than a list, so that
+         * widgetExists and the removal in the destructor do not have to scan
+         * every widget in the application.
          */
-        static std::list<Widget*> mWidgetInstances;
+        static std::set<Widget*> mWidgetInstances;
 
         /**
          * Holds all children of the widget.
