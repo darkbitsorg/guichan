@@ -45,7 +45,7 @@
 #define GCN_GUI_HPP
 
 #include <list>
-#include <set>
+#include <vector>
 
 #include "guichan/keyevent.hpp"
 #include "guichan/mouseevent.hpp"
@@ -394,14 +394,19 @@ namespace gcn
         virtual Widget* getKeyEventSource();
 
         /**
-         * Gets all widgets a certain coordinate in the Gui.
+         * Gets all widgets at a certain coordinate in the Gui, ordered from
+         * the top widget down to the deepest widget at the coordinate.
+         *
+         * The result is placed in a vector supplied by the caller so that the
+         * same vector can be reused from one mouse event to the next, as this
+         * is called for every mouse event.
          *
          * @param x The x coordinate.
          * @param y The y coordinate.
-         * @return A set of all widgets at the specified coordinate.
+         * @param result Cleared, then filled with the widgets found.
          * @since 0.9.0
          */
-        virtual std::set<Widget*> getWidgetsAt(int x, int y);
+        virtual void collectWidgetsAt(int x, int y, std::vector<Widget*>& result);
 
         /**
          * Holds the top widget.
@@ -495,6 +500,24 @@ namespace gcn
          * when the same button is released.
          */
         int mLastMouseDragButton;
+
+        /**
+         * Holds the widgets that have received a mouse entered event but no
+         * matching mouse exited event yet, ordered from the top widget down
+         * to the deepest widget under the mouse.
+         *
+         * The widgets are remembered rather than looked up again by
+         * coordinate, so that a widget which is hidden, removed or moved out
+         * from under the mouse still receives its mouse exited event.
+         */
+        std::vector<Widget*> mWidgetsWithMouse;
+
+        /**
+         * Scratch buffer holding the widgets currently under the mouse. Kept
+         * as a member so that its capacity is reused from one mouse event to
+         * the next instead of being reallocated.
+         */
+        std::vector<Widget*> mWidgetsAtMouse;
     };
 }
 
