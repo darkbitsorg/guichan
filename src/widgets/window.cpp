@@ -189,7 +189,6 @@ namespace gcn
                            d.x + d.width - 1,
                            d.y + d.height - 1);
 
-
         int textX;
         int textY;
 
